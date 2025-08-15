@@ -196,8 +196,17 @@ def search(ctx, query, limit):
         console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
         sys.exit(1)
     
-    searcher = ctx.obj['searcher']
-    results = searcher.search(query, limit=limit)
+    # Try hybrid search first
+    try:
+        from gitsaga.search.vector_search import HybridSearcher
+        searcher = HybridSearcher(ctx.obj['saga_dir'])
+        results = searcher.search(query, limit=limit, mode='hybrid')
+        console.print("[dim]Using hybrid search (text + semantic)[/dim]")
+    except ImportError:
+        # Fallback to text search
+        searcher = ctx.obj['searcher']
+        results = searcher.search(query, limit=limit)
+        console.print("[dim]Using text search (install faiss-cpu for semantic search)[/dim]")
     
     if not results:
         console.print(f"[yellow]No sagas found matching '{query}'[/yellow]")
@@ -576,6 +585,71 @@ def validate(ctx, saga_file):
         console.print("[yellow]DSPy not installed. Cannot validate saga structure.[/yellow]")
     except Exception as e:
         console.print(f"[red]Error validating saga: {e}[/red]")
+
+
+@cli.command()
+@click.pass_context
+def reindex(ctx):
+    """Rebuild the vector search index"""
+    show_banner()
+    if not ctx.obj['is_initialized']:
+        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        sys.exit(1)
+    
+    try:
+        from gitsaga.search.vector_search import VectorSearcher
+        
+        console.print("Building vector search index...")
+        searcher = VectorSearcher(ctx.obj['saga_dir'])
+        searcher.reindex_all()
+        
+        stats = searcher.get_index_stats()
+        console.print(f"[green]✓ Indexed {stats['total_sagas']} sagas[/green]")
+        console.print(f"Model: {stats['model']}")
+        console.print(f"Vector dimension: {stats['dimension']}")
+        
+    except ImportError:
+        console.print("[yellow]Vector search not available.[/yellow]")
+        console.print("Install with: pip install faiss-cpu sentence-transformers")
+    except Exception as e:
+        console.print(f"[red]Error building index: {e}[/red]")
+
+
+@cli.command('find-similar')
+@click.argument('saga_id')
+@click.option('--limit', '-l', default=5, help='Number of similar sagas to find')
+@click.pass_context
+def find_similar(ctx, saga_id, limit):
+    """Find sagas similar to a given saga"""
+    show_banner()
+    if not ctx.obj['is_initialized']:
+        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        sys.exit(1)
+    
+    try:
+        from gitsaga.search.vector_search import VectorSearcher
+        
+        searcher = VectorSearcher(ctx.obj['saga_dir'])
+        results = searcher.find_similar(saga_id, limit=limit)
+        
+        if not results:
+            console.print(f"[yellow]No similar sagas found for '{saga_id}'[/yellow]")
+            return
+        
+        console.print(f"\n[bold]Sagas similar to {saga_id}:[/bold]\n")
+        
+        for i, result in enumerate(results, 1):
+            console.print(f"{i}. [cyan]{result.title}[/cyan]")
+            console.print(f"   ID: {result.saga_id}")
+            console.print(f"   Similarity: {result.score:.2f}")
+            console.print(f"   {result.preview[:100]}...")
+            console.print()
+            
+    except ImportError:
+        console.print("[yellow]Vector search not available.[/yellow]")
+        console.print("Install with: pip install faiss-cpu sentence-transformers")
+    except Exception as e:
+        console.print(f"[red]Error finding similar sagas: {e}[/red]")
 
 
 @cli.command()
