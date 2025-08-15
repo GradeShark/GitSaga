@@ -14,16 +14,16 @@ if readme_path.exists():
 
 setup(
     name="gitsaga",
-    version="0.1.0",
-    author="GitSaga Developer",
-    description="Track the story behind your code - Development context manager",
+    version="2.0.0",
+    author="GradeShark",
+    description="Track the story behind your code - AI-powered development context manager",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/YOUR_USERNAME/gitsaga",  # Replace YOUR_USERNAME
+    url="https://github.com/GradeShark/gitsaga",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Version Control :: Git",
         "Topic :: Software Development :: Documentation",
@@ -33,6 +33,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
     ],
     python_requires=">=3.8",
     install_requires=[
@@ -41,14 +42,19 @@ setup(
         "rich>=13.5.2",
         "pyyaml>=6.0",
         "python-dateutil>=2.8.2",
+        "dspy-ai>=2.4.0",
+        "ollama>=0.1.7",
+        "faiss-cpu>=1.7.4",
+        "sentence-transformers>=2.2.2",
     ],
     entry_points={
         "console_scripts": [
             "saga=gitsaga.cli_wrapper:main",
+            "gitsaga=gitsaga.cli_wrapper:main",
         ],
     },
     project_urls={
-        "Bug Reports": "https://github.com/YOUR_USERNAME/gitsaga/issues",  # Replace YOUR_USERNAME
-        "Source": "https://github.com/YOUR_USERNAME/gitsaga",  # Replace YOUR_USERNAME
+        "Bug Reports": "https://github.com/GradeShark/gitsaga/issues",
+        "Source": "https://github.com/GradeShark/gitsaga",
     },
 )
