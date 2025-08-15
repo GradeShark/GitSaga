@@ -7,6 +7,7 @@ Track the story behind your code
 import click
 import sys
 import os
+import shutil
 from pathlib import Path
 from datetime import datetime, timedelta
 from rich.console import Console
@@ -88,6 +89,34 @@ def init(ctx):
     console.print(f"• Created .gitsaga/ directory")
     console.print(f"• Configuration saved to .gitsaga/config.json")
     
+    # Check if we're in a git repository
+    git_dir = Path.cwd() / '.git'
+    if git_dir.exists():
+        # Offer to install git hooks
+        console.print("\n[bold]Install git hooks for automatic saga capture?[/bold]")
+        console.print("This will automatically create sagas for significant commits.")
+        
+        if click.confirm("Install git hooks?", default=True):
+            # Install hooks
+            src_hook = Path(__file__).parent / 'hooks' / 'post_commit.py'
+            hooks_dir = git_dir / 'hooks'
+            hooks_dir.mkdir(exist_ok=True)
+            dest_hook = hooks_dir / 'post-commit'
+            
+            if dest_hook.exists():
+                if click.confirm("post-commit hook already exists. Overwrite?", default=False):
+                    shutil.copy2(src_hook, dest_hook)
+                    console.print("[green]✓ Git hooks installed![/green]")
+            else:
+                shutil.copy2(src_hook, dest_hook)
+                # Make executable on Unix-like systems
+                if os.name != 'nt':
+                    import stat
+                    dest_hook.chmod(dest_hook.stat().st_mode | stat.S_IEXEC)
+                console.print("[green]✓ Git hooks installed for automatic capture![/green]")
+        else:
+            console.print("You can install hooks later with: [cyan]saga install-hooks[/cyan]")
+    
     # Offer to set up AI features
     console.print("\n[bold]Optional: Set up AI features?[/bold]")
     console.print("This will install Ollama and download a small AI model (638MB).")
@@ -100,9 +129,10 @@ def init(ctx):
     else:
         console.print("You can set up AI later with: [cyan]saga setup-ai[/cyan]")
     
+    console.print("\n[green]✨ GitSaga is ready![/green]")
     console.print("\nNext steps:")
     console.print("  • Create your first saga: [cyan]saga commit \"Initial setup\"[/cyan]")
-    console.print("  • Install git hooks: [cyan]saga install-hooks[/cyan]")
+    console.print("  • Search for sagas: [cyan]saga search \"keyword\"[/cyan]")
     console.print("  • View help: [cyan]saga --help[/cyan]")
 
 

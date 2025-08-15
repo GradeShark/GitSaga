@@ -30,11 +30,18 @@ saga setup-ai
 ### Basic Usage
 
 ```bash
-# Initialize GitSaga in your project
+# Initialize GitSaga in your project (one command!)
 cd your-project
 saga init
+# This will:
+# - Set up GitSaga
+# - Offer to install git hooks (say yes!)
+# - Offer to set up AI features (optional)
 
-# Create your first saga
+# That's it! Now just use git normally and sagas are created automatically
+git commit -m "fix: Resolved database connection timeout"
+
+# Or manually create sagas
 saga commit "Fixed JWT timeout issue in Redis session handler"
 
 # Search your sagas
