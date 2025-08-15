@@ -5,10 +5,12 @@ GitSaga is a local-first development context manager that captures and retrieves
 ## Features
 
 - **📝 Capture Development Context**: Create "sagas" to document debugging sessions, feature implementations, and architectural decisions
+- **🤖 Automatic Capture (v2)**: Auto-detects significant commits and creates sagas using AI
 - **🔍 Smart Search**: Find relevant past solutions with text-based search (semantic search coming soon)
 - **🌿 Git Integration**: Automatically captures branch context and modified files
 - **💯 100% Local**: No cloud dependencies, your data stays on your machine
 - **⚡ Fast & Simple**: Lightweight CLI with instant search across hundreds of sagas
+- **🎯 DSPy Structure**: Enforces complete documentation with AI-powered templates
 
 ## Quick Start
 
@@ -19,6 +21,17 @@ GitSaga is a local-first development context manager that captures and retrieves
 git clone https://github.com/yourusername/gitsaga.git
 cd gitsaga
 pip install -e .
+
+# Optional: Install Ollama for AI-enhanced features (recommended)
+# Download from https://ollama.ai or use:
+# Windows: winget install Ollama.Ollama
+# Mac: brew install ollama
+# Linux: curl -fsSL https://ollama.ai/install.sh | sh
+
+# After installing Ollama, pull a model:
+ollama pull tinyllama  # Small, fast model (638MB)
+# or
+ollama pull llama2     # Larger, more capable model (3.8GB)
 ```
 
 ### Basic Usage
@@ -100,6 +113,39 @@ Display the full content of a specific saga.
 
 ### `saga status`
 Show repository statistics and recent activity.
+
+## V2 Features (Automatic Capture)
+
+**Note**: AI features work without Ollama but provide better results when installed. GitSaga will automatically fall back to basic generation if Ollama is not available.
+
+### `saga capture`
+Manually capture a saga from any commit.
+
+Options:
+- `--commit`: Specify commit (default: HEAD)
+- `--force`: Force capture even if not significant
+
+### `saga monitor`
+Analyze recent commits and auto-capture significant ones.
+
+Options:
+- `--since`: Analyze commits since (default: HEAD~10)
+- `--dry-run`: Preview without saving
+
+### `saga score <commit>`
+Check a commit's significance score for saga capture.
+
+### `saga template <type>`
+Generate a saga template (debugging, feature, incident).
+
+Options:
+- `--output`: Save to file instead of displaying
+
+### `saga validate <file>`
+Check saga completeness and get improvement suggestions.
+
+### `saga install-hooks`
+Install git hooks for automatic saga capture on commit.
 
 ## Example Workflow
 
