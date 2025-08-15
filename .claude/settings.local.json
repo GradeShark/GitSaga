@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(saga commit:*)",
+      "Bash(saga search:*)",
+      "Bash(saga log:*)",
+      "Bash(saga status:*)",
+      "Bash(python test:*)"
+    ],
+    "deny": [],
+    "ask": [],
+    "defaultMode": "acceptEdits"
+  }
+}
