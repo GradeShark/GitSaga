@@ -683,6 +683,44 @@ def find_similar(ctx, saga_id, limit):
 
 
 @cli.command()
+@click.pass_context
+def uninstall_help(ctx):
+    """Show uninstall instructions"""
+    show_banner()
+    
+    console.print("\n[bold]🗑️  How to Uninstall GitSaga[/bold]\n")
+    
+    console.print("[bold]Quick Uninstall:[/bold]")
+    console.print("  pip uninstall gitsaga\n")
+    
+    console.print("[bold]Complete Cleanup:[/bold]")
+    console.print("  1. Uninstall package:     [cyan]pip uninstall gitsaga[/cyan]")
+    console.print("  2. Remove git hooks:      [cyan]rm .git/hooks/post-commit[/cyan]")
+    console.print("  3. Remove saga data:      [cyan]rm -rf .sagadex/[/cyan]")
+    console.print("  4. Or keep sagas:         [cyan]rm .sagadex/config.json[/cyan]\n")
+    
+    console.print("[bold]Using Uninstall Script:[/bold]")
+    console.print("  [cyan]python path/to/gitsaga/uninstall.py[/cyan]")
+    console.print("  Options:")
+    console.print("    --keep-sagas     Keep your saga documentation (default)")
+    console.print("    --remove-sagas   Remove everything")
+    console.print("    --remove-ollama  Also uninstall Ollama\n")
+    
+    console.print("[bold]What Gets Removed:[/bold]")
+    console.print("  • Python package and CLI commands")
+    console.print("  • Git hooks (per repository)")
+    console.print("  • Configuration files")
+    console.print("  • Search indexes")
+    console.print("  • Optionally: saga files and Ollama\n")
+    
+    console.print("[bold]💡 Tip:[/bold] Keep your sagas! They're valuable documentation.")
+    console.print("")
+    console.print("[bold]To Reinstall:[/bold]")
+    console.print("  [cyan]pip install gitsaga[/cyan]")
+    console.print("  [cyan]saga init[/cyan]")
+
+
+@cli.command()
 @click.pass_context  
 def setup_ai(ctx):
     """Set up AI features (installs Ollama and downloads model)"""

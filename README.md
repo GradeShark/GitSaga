@@ -150,6 +150,20 @@ Install git hooks for automatic saga capture on commit.
 ### `saga setup-ai`
 One-command setup for AI features (installs Ollama + downloads model).
 
+## Uninstalling
+
+To uninstall GitSaga:
+```bash
+# Quick uninstall
+pip uninstall gitsaga
+
+# For complete cleanup instructions
+saga uninstall-help
+
+# Or use the uninstall script
+python path/to/gitsaga/uninstall.py --keep-sagas
+```
+
 ## Example Workflow
 
 ```bash

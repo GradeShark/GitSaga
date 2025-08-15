@@ -11,7 +11,8 @@
       "Bash(python:*)",
       "Bash(git commit:*)",
       "Bash(git add:*)",
-      "Bash(saga:*)"
+      "Bash(saga:*)",
+      "Bash(tree:*)"
     ],
     "deny": [],
     "ask": [],
