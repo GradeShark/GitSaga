@@ -10,16 +10,18 @@ def main():
     """Main entry point with proper encoding setup"""
     # Set UTF-8 encoding for Windows
     if sys.platform == "win32":
-        # Set console code page to UTF-8
-        import subprocess
+        # Configure Python for UTF-8 without launching subprocess
         try:
-            subprocess.run('chcp 65001', shell=True, capture_output=True, check=False)
+            sys.stdout.reconfigure(encoding='utf-8')
+            sys.stderr.reconfigure(encoding='utf-8')
         except:
-            pass
+            # Fallback for older Python versions
+            import io
+            sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+            sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
         
-        # Configure Python for UTF-8
-        sys.stdout.reconfigure(encoding='utf-8')
-        sys.stderr.reconfigure(encoding='utf-8')
+        # Set environment variable for UTF-8
+        os.environ['PYTHONIOENCODING'] = 'utf-8'
     
     # Import and run the actual CLI
     from gitsaga.cli import cli
