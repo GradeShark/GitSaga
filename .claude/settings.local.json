@@ -6,7 +6,9 @@
       "Bash(saga search:*)",
       "Bash(saga log:*)",
       "Bash(saga status:*)",
-      "Bash(python test:*)"
+      "Bash(python test:*)",
+      "Bash(git checkout:*)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": [],

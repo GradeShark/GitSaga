@@ -18,6 +18,8 @@ from .core.saga import Saga
 from .core.config import Config
 from .core.repository import GitRepository
 from .search.text_search import TextSearcher
+from .capture.auto_chronicler import AutoChronicler
+from .capture.significance import SignificanceScorer, CommitContext
 
 # Create console with proper encoding for Windows
 console = Console(force_terminal=True, legacy_windows=False)
@@ -379,6 +381,134 @@ def status(ctx):
         for saga in recent:
             date_str = saga.timestamp.strftime("%Y-%m-%d %H:%M")
             console.print(f"  • [{date_str}] {saga.title[:50]}")
+
+
+@cli.command()
+@click.option('--commit', '-c', default='HEAD', help='Commit to capture (default: HEAD)')
+@click.option('--force', '-f', is_flag=True, help='Force capture even if not significant')
+@click.pass_context
+def capture(ctx, commit, force):
+    """Capture a saga from a git commit"""
+    show_banner()
+    if not ctx.obj['is_initialized']:
+        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        sys.exit(1)
+    
+    chronicler = AutoChronicler()
+    
+    if force:
+        # Temporarily lower the threshold to capture
+        chronicler.scorer.min_threshold = 0.0
+    
+    saga = chronicler.capture_from_commit(commit)
+    
+    if saga:
+        console.print(f"[green]✓ Captured saga: {saga.title}[/green]")
+    else:
+        console.print("[yellow]Commit not significant enough for saga capture.[/yellow]")
+        console.print("Use --force to capture anyway.")
+
+
+@cli.command()
+@click.option('--since', '-s', default='HEAD~10', help='Analyze commits since (default: HEAD~10)')
+@click.option('--dry-run', is_flag=True, help='Show what would be captured without saving')
+@click.pass_context
+def monitor(ctx, since, dry_run):
+    """Monitor recent commits and capture significant sagas"""
+    show_banner()
+    if not ctx.obj['is_initialized']:
+        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        sys.exit(1)
+    
+    chronicler = AutoChronicler()
+    
+    if dry_run:
+        console.print("[yellow]DRY RUN MODE - No sagas will be saved[/yellow]\n")
+    
+    chronicler.monitor_commits(since)
+
+
+@cli.command()
+@click.argument('commit', default='HEAD')
+@click.pass_context
+def score(ctx, commit):
+    """Score a commit's significance for saga capture"""
+    show_banner()
+    if not ctx.obj['is_initialized']:
+        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        sys.exit(1)
+    
+    chronicler = AutoChronicler()
+    context = chronicler._get_commit_context(commit)
+    
+    if not context:
+        console.print(f"[red]Could not get context for commit {commit}[/red]")
+        return
+    
+    scorer = SignificanceScorer()
+    result = scorer.calculate_score(context)
+    
+    # Display results
+    console.print(f"\n[bold]Commit Significance Analysis[/bold]")
+    console.print(f"Commit: {commit[:8]}")
+    console.print(f"Message: {context.message.split(chr(10))[0][:60]}...")
+    console.print(f"\n[bold]Score: {result['score']:.2f}[/bold]")
+    
+    if result['is_significant']:
+        console.print("[green]✓ This commit is saga-worthy![/green]")
+    else:
+        console.print("[yellow]✗ Not significant enough for automatic capture[/yellow]")
+    
+    console.print(f"\nSuggested type: [cyan]{result['suggested_type']}[/cyan]")
+    
+    if result['factors']:
+        console.print("\n[bold]Scoring factors:[/bold]")
+        for factor in result['factors']:
+            console.print(f"  • {factor}")
+
+
+@cli.command('install-hooks')
+@click.pass_context
+def install_hooks(ctx):
+    """Install git hooks for automatic saga capture"""
+    show_banner()
+    if not ctx.obj['is_initialized']:
+        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        sys.exit(1)
+    
+    import shutil
+    
+    # Source hook file
+    src_hook = Path(__file__).parent / 'hooks' / 'post_commit.py'
+    
+    # Destination in .git/hooks
+    git_dir = Path.cwd() / '.git'
+    if not git_dir.exists():
+        console.print("[red]Not in a git repository![/red]")
+        return
+    
+    hooks_dir = git_dir / 'hooks'
+    hooks_dir.mkdir(exist_ok=True)
+    
+    dest_hook = hooks_dir / 'post-commit'
+    
+    # Check if hook already exists
+    if dest_hook.exists():
+        if not click.confirm("post-commit hook already exists. Overwrite?"):
+            console.print("[yellow]Hook installation cancelled[/yellow]")
+            return
+    
+    # Copy hook file
+    shutil.copy2(src_hook, dest_hook)
+    
+    # Make executable on Unix-like systems
+    if os.name != 'nt':
+        import stat
+        dest_hook.chmod(dest_hook.stat().st_mode | stat.S_IEXEC)
+    
+    console.print("[green]✓ Git hooks installed successfully![/green]")
+    console.print("Sagas will now be automatically captured for significant commits.")
+    console.print("\nTo test: make a commit with 'fix' or 'feature' in the message.")
 
 
 if __name__ == '__main__':
