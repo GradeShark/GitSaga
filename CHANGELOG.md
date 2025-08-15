@@ -5,55 +5,44 @@ All notable changes to GitSaga will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.0] - 2025-08-14
+## [2.0.0] - 2024-01-15
 
 ### Added
-- Initial MVP release of GitSaga
-- Core saga management system with markdown storage
-- CLI commands: `init`, `commit`, `search`, `log`, `show`, `status`
-- Text-based search with multi-factor relevance scoring
-- Git integration for branch and file context
-- ANSI Shadow ASCII art banner (like Claude Code)
-- Windows compatibility with UTF-8 encoding support
-- Rich terminal UI with tables and colored output
-- Saga types: debugging, feature, architecture, optimization
-- Tag system for categorization
-- Branch-aware saga organization
-- Configuration system with `.gitsaga/config.json`
+- **Automatic Saga Capture**: Intelligent significance scoring (0.3-1.0) automatically captures important commits
+- **Interactive Debugging Prompts**: High-value commits trigger prompts for root cause, solution explanation, and lessons learned
+- **Weighted Quality Scoring**: Prioritizes reproducible solutions (code: 35%, explanation: 30%, root cause: 25%)
+- **`saga enhance` Command**: Add debugging details to any commit after the fact
+- **Git Hook Integration**: Post-commit hook for automatic capture
+- **Ollama/TinyLlama Support**: Optional local AI enhancement (100% private)
+- **DSPy Integration**: Structured saga generation with consistent quality
+- **FAISS Vector Search**: Semantic similarity search (when dependencies available)
+- **Auto-installer**: Zero-friction setup for Ollama and models
+- **MCP Server**: Model Context Protocol server for Claude integration
+- **Rich CLI Interface**: Beautiful formatting, progress indicators, and helpful prompts
 
-### Technical Details
-- Built with Python 3.8+, Click, and Rich
-- 100% local operation - no cloud dependencies
-- Git-native storage using markdown with YAML frontmatter
-- Zero database requirement - just files and folders
+### Changed
+- **Directory Structure**: All sagas now consistently save to `.gitsaga/sagas/` (removed `.sagadex`)
+- **Significance Thresholds**: Bug fixes score 0.70+, critical issues score 1.00
+- **Banner Display**: Now shows only once per session instead of every command
+- **Error Handling**: Graceful fallbacks when AI features unavailable
+- **Windows Compatibility**: Fixed encoding issues and PowerShell console flashing
 
-### Known Issues
-- Vector/semantic search not yet implemented
-- No automatic saga capture from git commits
-- No Context Butler for AI integration
-- Manual saga creation only
+### Fixed
+- Interactive capture bug causing UnboundLocalError
+- Directory inconsistency between `.gitsaga` and `.sagadex`
+- Windows Unicode encoding errors
+- PowerShell console flashing issue
+- DSPy warning spam
 
-### Contributors
-- Initial implementation by Claude Code
+### Removed
+- `.sagadex` directory usage (consolidated to `.gitsaga`)
 
----
+## [1.0.0] - 2024-01-01
 
-## Roadmap
-
-### [0.2.0] - Planned
-- Add FAISS vector search with sentence-transformers
-- Implement git hooks for auto-capture
-- Add significance scoring for automatic saga creation
-- Import existing documentation (CLAUDE.md files)
-
-### [0.3.0] - Planned  
-- Context Butler with TinyLlama integration
-- Progressive context loading
-- Claude Code integration
-- Export functionality
-
-### [1.0.0] - Future
-- Full semantic search
-- Team collaboration features
-- Cloud backup (optional)
-- VS Code extension
+### Added
+- Initial release
+- Basic saga creation and search
+- Manual documentation capture
+- Git integration for context
+- Text-based search
+- Simple CLI interface

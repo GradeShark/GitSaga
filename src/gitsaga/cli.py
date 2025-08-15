@@ -44,13 +44,15 @@ def show_banner():
             console.print(BANNER, style="bold cyan")
             console.print("  Track the story behind your code", style="dim")
             console.print("  Version 0.1.0 | Type 'saga --help' for commands\n", style="dim")
+            # Mark banner as shown
+            os.environ['GITSAGA_BANNER_SHOWN'] = '1'
         except UnicodeEncodeError:
             # Fallback to direct print with UTF-8 encoding
             print(BANNER)
             print("  Track the story behind your code")
             print("  Version 0.1.0 | Type 'saga --help' for commands\n")
-        
-        os.environ['GITSAGA_BANNER_SHOWN'] = '1'
+            # Mark banner as shown
+            os.environ['GITSAGA_BANNER_SHOWN'] = '1'
 
 
 @click.group()
@@ -734,6 +736,48 @@ def setup_ai(ctx):
         console.print("Try: saga capture --force")
     else:
         console.print("\n[yellow]AI setup incomplete. GitSaga will work with basic features.[/yellow]")
+
+
+@cli.command()
+@click.argument('commit', default='HEAD')
+@click.pass_context
+def enhance(ctx, commit):
+    """Add high-value debugging details to a saga"""
+    show_banner()
+    if not ctx.obj['is_initialized']:
+        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        sys.exit(1)
+    
+    from .capture.interactive_capture import InteractiveCapturer
+    from .capture.auto_chronicler import AutoChronicler
+    
+    console.print(f"[cyan]Enhancing saga for commit {commit}...[/cyan]")
+    
+    # Get the basic saga from the commit
+    chronicler = AutoChronicler()
+    context = chronicler._get_commit_context(commit)
+    
+    if not context:
+        console.print(f"[red]Could not find commit {commit}[/red]")
+        return
+    
+    # Create a basic saga if needed
+    saga = chronicler.capture_from_commit(commit)
+    if not saga:
+        console.print("[yellow]Creating saga from commit...[/yellow]")
+        saga = Saga(
+            title=context.message.split('\n')[0][:80],
+            content=f"Commit: {context.hash[:8]}\n{context.message}",
+            saga_type='debugging'
+        )
+    
+    # Prompt for high-value information
+    capturer = InteractiveCapturer()
+    enhanced_saga = capturer.capture_high_value_info(context.message, saga)
+    
+    # Save the enhanced saga
+    saga_path = enhanced_saga.save(Path.cwd() / '.gitsaga' / 'sagas')
+    console.print(f"[green]✓ Enhanced saga saved: {saga_path.name}[/green]")
 
 
 @cli.command('install-hooks')

@@ -84,10 +84,10 @@ class OllamaAutoInstaller:
         """Install Ollama based on the operating system"""
         if self.is_ollama_installed():
             if self.verbose:
-                print("✓ Ollama is already installed")
+                print("[OK] Ollama is already installed")
             return True
         
-        print("\n🚀 Installing Ollama (one-time setup)...")
+        print("\nInstalling Ollama (one-time setup)...")
         
         try:
             if self.system == 'Windows':
@@ -114,7 +114,7 @@ class OllamaAutoInstaller:
                 text=True
             )
             if result.returncode == 0:
-                print("✓ Ollama installed via winget")
+                print("[OK] Ollama installed via winget")
                 return True
         except FileNotFoundError:
             pass
@@ -135,7 +135,7 @@ class OllamaAutoInstaller:
             # Clean up installer
             installer_path.unlink(missing_ok=True)
             
-            print("✓ Ollama installed successfully")
+            print("[OK] Ollama installed successfully")
             return True
             
         except Exception as e:
@@ -153,7 +153,7 @@ class OllamaAutoInstaller:
                 text=True
             )
             if result.returncode == 0:
-                print("✓ Ollama installed via Homebrew")
+                print("[OK] Ollama installed via Homebrew")
                 return True
         except FileNotFoundError:
             pass
@@ -171,7 +171,7 @@ class OllamaAutoInstaller:
                 ['sh', '-c', 'curl -fsSL https://ollama.ai/install.sh | sh'],
                 check=True
             )
-            print("✓ Ollama installed successfully")
+            print("[OK] Ollama installed successfully")
             return True
         except subprocess.CalledProcessError:
             print("Could not install automatically.")
@@ -197,11 +197,11 @@ class OllamaAutoInstaller:
         
         if self.has_model(model_name):
             if self.verbose:
-                print(f"✓ Model '{model_name}' already downloaded")
+                print(f"[OK] Model '{model_name}' already downloaded")
             return True
         
         size = self.MODEL_SIZES.get(model_name, 'unknown size')
-        print(f"\n📦 Downloading {model_name} model ({size})...")
+        print(f"\n Downloading {model_name} model ({size})...")
         print("This is a one-time download, please wait...")
         
         try:
@@ -227,7 +227,7 @@ class OllamaAutoInstaller:
             process.wait()
             
             if process.returncode == 0:
-                print(f"✓ Model '{model_name}' downloaded successfully")
+                print(f"[OK] Model '{model_name}' downloaded successfully")
                 return True
             else:
                 print(f"Failed to download model '{model_name}'")
@@ -239,13 +239,13 @@ class OllamaAutoInstaller:
     
     def full_setup(self):
         """Complete setup: install Ollama and download model"""
-        print("\n🎯 GitSaga AI Setup")
+        print("\n GitSaga AI Setup")
         print("-" * 40)
         
         # Step 1: Install Ollama if needed
         if not self.is_ollama_installed():
             if not self.install_ollama():
-                print("\n⚠️  Could not install Ollama automatically.")
+                print("\n[WARNING] Could not install Ollama automatically.")
                 print("GitSaga will work without AI features.")
                 return False
         
@@ -253,7 +253,7 @@ class OllamaAutoInstaller:
         if not self.is_ollama_running():
             print("Starting Ollama server...")
             if not self.start_ollama_server():
-                print("⚠️  Could not start Ollama server.")
+                print("[WARNING] Could not start Ollama server.")
                 print("You may need to start it manually: ollama serve")
         
         # Step 3: Download model
@@ -263,16 +263,16 @@ class OllamaAutoInstaller:
             
             if response == 'y':
                 if self.pull_model(self.DEFAULT_MODEL):
-                    print("\n✨ AI features are ready to use!")
+                    print("\n[SUCCESS] AI features are ready to use!")
                     return True
                 else:
-                    print("\n⚠️  Model download failed.")
+                    print("\n[WARNING] Model download failed.")
                     print("You can try again later with: ollama pull tinyllama")
             else:
                 print("\nSkipping model download.")
                 print("You can download later with: ollama pull tinyllama")
         else:
-            print("\n✨ AI features are ready to use!")
+            print("\n[SUCCESS] AI features are ready to use!")
             return True
         
         print("\nGitSaga will work without AI enhancement.")
