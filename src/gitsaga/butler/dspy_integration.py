@@ -3,12 +3,39 @@ DSPy integration for enforcing saga structure and quality.
 Uses local LLMs (TinyLlama/Ollama) for zero-cost processing.
 """
 
-import dspy
 from typing import List, Optional, Dict, Any
 from dataclasses import dataclass
 import json
 import subprocess
 from pathlib import Path
+
+try:
+    import dspy
+    DSPY_INSTALLED = True
+except ImportError:
+    DSPY_INSTALLED = False
+    # Create a dummy dspy module to prevent attribute errors
+    class DummyDSPy:
+        class Signature:
+            pass
+        class InputField:
+            def __init__(self, *args, **kwargs):
+                pass
+        class OutputField:
+            def __init__(self, *args, **kwargs):
+                pass
+        class ChainOfThought:
+            def __init__(self, *args, **kwargs):
+                pass
+        class OllamaLocal:
+            def __init__(self, *args, **kwargs):
+                pass
+        class settings:
+            @staticmethod
+            def configure(*args, **kwargs):
+                pass
+    
+    dspy = DummyDSPy()
 
 
 @dataclass
@@ -109,6 +136,9 @@ class SagaEnhancer:
             model: Model to use (tinyllama, llama2, mistral, etc)
             use_local: Use local Ollama instead of API
         """
+        if not DSPY_INSTALLED:
+            raise ImportError("DSPy is not installed. Install with: pip install dspy-ai")
+            
         self.model = model
         self.use_local = use_local
         

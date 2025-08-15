@@ -21,7 +21,7 @@ try:
     DSPY_AVAILABLE = True
 except ImportError:
     DSPY_AVAILABLE = False
-    print("DSPy not available. Sagas will be created without AI enhancement.")
+    # Don't print warning on import, only when actually needed
 
 
 @dataclass
@@ -54,9 +54,13 @@ class AutoChronicler:
         if use_ai and DSPY_AVAILABLE:
             try:
                 self.enhancer = SagaEnhancer()
-                print("AI enhancement enabled with DSPy")
+                # Only show this in verbose mode or when explicitly setting up
+                if os.environ.get('SAGA_VERBOSE'):
+                    print("AI enhancement enabled with DSPy")
             except Exception as e:
-                print(f"Could not initialize AI enhancer: {e}")
+                # Silent fail unless verbose
+                if os.environ.get('SAGA_VERBOSE'):
+                    print(f"Could not initialize AI enhancer: {e}")
                 self.enhancer = None
         
     def capture_from_commit(self, commit_hash: str = 'HEAD') -> Optional[Saga]:
