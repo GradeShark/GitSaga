@@ -467,6 +467,99 @@ def score(ctx, commit):
             console.print(f"  • {factor}")
 
 
+@cli.command()
+@click.argument('saga_type', type=click.Choice(['debugging', 'feature', 'incident']))
+@click.option('--output', '-o', help='Output file path')
+@click.pass_context
+def template(ctx, saga_type, output):
+    """Generate a saga template for manual documentation"""
+    show_banner()
+    
+    try:
+        from gitsaga.butler.dspy_integration import SagaEnhancer
+        enhancer = SagaEnhancer(use_local=False)  # Don't need AI for templates
+        template_content = enhancer.generate_saga_template(saga_type)
+        
+        if output:
+            output_path = Path(output)
+            output_path.write_text(template_content)
+            console.print(f"[green]✓ Template saved to {output}[/green]")
+        else:
+            console.print(template_content)
+            
+    except ImportError:
+        console.print("[yellow]DSPy not installed. Install with: pip install dspy-ai[/yellow]")
+        # Provide basic template
+        basic_template = f"""# [{saga_type.title()} Title]
+
+**Date**: {datetime.now().strftime('%Y-%m-%d')}
+**Type**: {saga_type.title()}
+
+## Summary
+[Add summary here]
+
+## Details
+[Add details here]
+
+## Lessons Learned
+[Add lessons here]
+"""
+        if output:
+            Path(output).write_text(basic_template)
+            console.print(f"[green]✓ Basic template saved to {output}[/green]")
+        else:
+            console.print(basic_template)
+
+
+@cli.command()
+@click.argument('saga_file')
+@click.pass_context
+def validate(ctx, saga_file):
+    """Validate saga completeness and quality"""
+    show_banner()
+    
+    if not Path(saga_file).exists():
+        console.print(f"[red]File not found: {saga_file}[/red]")
+        return
+    
+    try:
+        from gitsaga.butler.dspy_integration import SagaEnhancer
+        from gitsaga.core.saga import Saga
+        
+        # Load saga
+        saga = Saga.from_file(Path(saga_file))
+        
+        # Validate with DSPy
+        enhancer = SagaEnhancer(use_local=False)
+        validation = enhancer.validate_saga_completeness(saga.content, saga.saga_type)
+        
+        # Display results
+        console.print(f"\n[bold]Saga Validation Report[/bold]")
+        console.print(f"File: {saga_file}")
+        console.print(f"Type: {saga.saga_type}")
+        console.print(f"\nCompleteness Score: [{'green' if validation['completeness_score'] >= 0.8 else 'yellow'}]{validation['completeness_score']:.0%}[/]")
+        
+        if validation['present_sections']:
+            console.print("\n[green]✓ Present Sections:[/green]")
+            for section in validation['present_sections']:
+                console.print(f"  • {section}")
+        
+        if validation['missing_sections']:
+            console.print("\n[yellow]⚠ Missing Sections:[/yellow]")
+            for section in validation['missing_sections']:
+                console.print(f"  • {section}")
+        
+        if validation['recommendations']:
+            console.print("\n[bold]Recommendations:[/bold]")
+            for rec in validation['recommendations']:
+                console.print(f"  • {rec}")
+                
+    except ImportError:
+        console.print("[yellow]DSPy not installed. Cannot validate saga structure.[/yellow]")
+    except Exception as e:
+        console.print(f"[red]Error validating saga: {e}[/red]")
+
+
 @cli.command('install-hooks')
 @click.pass_context
 def install_hooks(ctx):

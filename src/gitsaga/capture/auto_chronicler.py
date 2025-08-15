@@ -16,6 +16,13 @@ from ..core.saga import Saga
 from ..core.repository import GitRepository
 from .significance import SignificanceScorer, CommitContext
 
+try:
+    from ..butler.dspy_integration import SagaEnhancer
+    DSPY_AVAILABLE = True
+except ImportError:
+    DSPY_AVAILABLE = False
+    print("DSPy not available. Sagas will be created without AI enhancement.")
+
 
 @dataclass
 class SessionContext:
@@ -35,12 +42,22 @@ class AutoChronicler:
     for significant debugging sessions and implementations.
     """
     
-    def __init__(self, repo_path: Path = None):
+    def __init__(self, repo_path: Path = None, use_ai: bool = True):
         self.repo_path = repo_path or Path.cwd()
         self.repo = GitRepository(self.repo_path)
         self.scorer = SignificanceScorer()
         self.saga_dir = self.repo_path / '.sagadex'
         self.context_file = self.repo_path / '.saga_context.json'
+        
+        # Initialize AI enhancer if available and requested
+        self.enhancer = None
+        if use_ai and DSPY_AVAILABLE:
+            try:
+                self.enhancer = SagaEnhancer()
+                print("AI enhancement enabled with DSPy")
+            except Exception as e:
+                print(f"Could not initialize AI enhancer: {e}")
+                self.enhancer = None
         
     def capture_from_commit(self, commit_hash: str = 'HEAD') -> Optional[Saga]:
         """
@@ -213,8 +230,15 @@ class AutoChronicler:
                            session: Optional[SessionContext]) -> str:
         """
         Build detailed saga content based on commit and session context.
-        Inspired by the user's documentation style.
+        Uses DSPy for enhancement if available.
         """
+        # Try AI enhancement first if available
+        if self.enhancer and score_result['suggested_type'] in ['debugging', 'feature', 'incident']:
+            enhanced = self._build_enhanced_content(context, score_result, session)
+            if enhanced:
+                return enhanced
+        
+        # Fallback to manual content building
         content = []
         
         # Header with timestamp and significance
@@ -324,6 +348,163 @@ class AutoChronicler:
             content.append("")
             
         return '\n'.join(content)
+    
+    def _build_enhanced_content(self, context: CommitContext,
+                               score_result: Dict[str, Any],
+                               session: Optional[SessionContext]) -> Optional[str]:
+        """Build AI-enhanced saga content using DSPy"""
+        try:
+            # Prepare context for DSPy
+            dspy_context = {
+                'commit_message': context.message,
+                'files_changed': context.files_changed,
+                'diff_content': context.diff_content,
+                'session_context': ''
+            }
+            
+            # Add session context if available
+            if session:
+                session_info = []
+                if session.tool:
+                    session_info.append(f"Tool: {session.tool}")
+                if session.duration:
+                    hours = session.duration.total_seconds() / 3600
+                    session_info.append(f"Duration: {hours:.1f} hours")
+                if session.conversation_summary:
+                    session_info.append(f"Summary: {session.conversation_summary}")
+                if session.errors_encountered:
+                    session_info.append(f"Errors: {', '.join(session.errors_encountered[:3])}")
+                dspy_context['session_context'] = ' | '.join(session_info)
+            
+            # Get enhanced content from DSPy
+            saga_type = score_result['suggested_type']
+            enhanced = self.enhancer.enhance_saga(saga_type, dspy_context)
+            
+            # Format enhanced content into markdown
+            content = []
+            
+            # Header
+            content.append(f"# {self._generate_title(context)}")
+            content.append("")
+            content.append(f"**Date**: {context.timestamp.strftime('%Y-%m-%d')}")
+            content.append(f"**Type**: {saga_type.title()}")
+            content.append(f"**Branch**: {context.branch}")
+            content.append(f"**Significance Score**: {score_result['score']:.2f}")
+            content.append("")
+            content.append("---")
+            content.append("")
+            
+            if saga_type == 'debugging':
+                # Symptoms
+                if enhanced.get('symptoms'):
+                    content.append("## 📋 The Problem")
+                    content.append("")
+                    content.append("### Symptoms")
+                    content.append(enhanced['symptoms'])
+                    content.append("")
+                
+                # Investigation
+                if enhanced.get('investigation_steps'):
+                    content.append("## 🔍 Investigation")
+                    content.append("")
+                    content.append(enhanced['investigation_steps'])
+                    content.append("")
+                
+                # Failed Attempts
+                if enhanced.get('failed_attempts'):
+                    content.append("## ❌ Failed Attempts")
+                    content.append("")
+                    content.append(enhanced['failed_attempts'])
+                    content.append("")
+                
+                # Root Cause
+                if enhanced.get('root_cause'):
+                    content.append("## 💡 Root Cause")
+                    content.append("")
+                    content.append(enhanced['root_cause'])
+                    content.append("")
+                
+                # Solution
+                if enhanced.get('solution'):
+                    content.append("## ✅ Solution")
+                    content.append("")
+                    content.append(enhanced['solution'])
+                    
+                    # Add code diff if available
+                    if context.diff_content:
+                        content.append("")
+                        content.append("### Code Changes")
+                        content.append("```diff")
+                        diff_lines = context.diff_content.split('\n')[:50]
+                        content.extend(diff_lines)
+                        content.append("```")
+                    content.append("")
+                
+                # Verification
+                if enhanced.get('verification'):
+                    content.append("## 🧪 Verification")
+                    content.append("")
+                    content.append(enhanced['verification'])
+                    content.append("")
+                
+                # Lessons Learned
+                if enhanced.get('lessons'):
+                    content.append("## 📝 Lessons Learned")
+                    content.append("")
+                    content.append(enhanced['lessons'])
+                    content.append("")
+                    
+            elif saga_type == 'feature':
+                # Feature content structure
+                for section, title in [
+                    ('feature_description', '## 📋 Feature Overview'),
+                    ('requirements', '## 📝 Requirements'),
+                    ('implementation_approach', '## 🏗️ Implementation'),
+                    ('key_decisions', '## 🎯 Key Decisions'),
+                    ('testing_approach', '## 🧪 Testing'),
+                    ('future_considerations', '## 🔮 Future Considerations')
+                ]:
+                    if enhanced.get(section):
+                        content.append(title)
+                        content.append("")
+                        content.append(enhanced[section])
+                        content.append("")
+                        
+            elif saga_type in ['incident', 'critical']:
+                # Incident content structure
+                for section, title in [
+                    ('incident_summary', '## 📊 Executive Summary'),
+                    ('timeline', '## 🕐 Timeline'),
+                    ('impact', '## 💥 Impact Assessment'),
+                    ('root_causes', '## 🔍 Root Causes'),
+                    ('immediate_fix', '## 🚨 Immediate Actions'),
+                    ('long_term_fix', '## 📋 Long-term Fixes'),
+                    ('postmortem', '## 📝 Postmortem')
+                ]:
+                    if enhanced.get(section):
+                        content.append(title)
+                        content.append("")
+                        content.append(enhanced[section])
+                        content.append("")
+            
+            # Add metadata footer
+            content.append("---")
+            content.append("")
+            content.append(f"**Files Changed**: {len(context.files_changed)}")
+            content.append(f"**Lines Added**: {context.lines_added}")
+            content.append(f"**Lines Deleted**: {context.lines_deleted}")
+            
+            if session and session.tool:
+                content.append(f"**Development Tool**: {session.tool}")
+            
+            content.append("")
+            content.append("*Generated with GitSaga AutoChronicler + DSPy*")
+            
+            return '\n'.join(content)
+            
+        except Exception as e:
+            print(f"Error during AI enhancement: {e}")
+            return None
         
     def _generate_title(self, context: CommitContext) -> str:
         """Generate a descriptive title for the saga"""

@@ -8,7 +8,8 @@
       "Bash(saga status:*)",
       "Bash(python test:*)",
       "Bash(git checkout:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": [],

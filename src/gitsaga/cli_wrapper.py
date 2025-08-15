@@ -22,7 +22,7 @@ def main():
         sys.stderr.reconfigure(encoding='utf-8')
     
     # Import and run the actual CLI
-    from .cli import cli
+    from gitsaga.cli import cli
     cli()
 
 if __name__ == '__main__':
