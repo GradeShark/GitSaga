@@ -22,16 +22,9 @@ git clone https://github.com/yourusername/gitsaga.git
 cd gitsaga
 pip install -e .
 
-# Optional: Install Ollama for AI-enhanced features (recommended)
-# Download from https://ollama.ai or use:
-# Windows: winget install Ollama.Ollama
-# Mac: brew install ollama
-# Linux: curl -fsSL https://ollama.ai/install.sh | sh
-
-# After installing Ollama, pull a model:
-ollama pull tinyllama  # Small, fast model (638MB)
-# or
-ollama pull llama2     # Larger, more capable model (3.8GB)
+# That's it! GitSaga will offer to set up AI features on first run
+# Or manually set up AI anytime with:
+saga setup-ai
 ```
 
 ### Basic Usage
@@ -116,7 +109,7 @@ Show repository statistics and recent activity.
 
 ## V2 Features (Automatic Capture)
 
-**Note**: AI features work without Ollama but provide better results when installed. GitSaga will automatically fall back to basic generation if Ollama is not available.
+**Note**: GitSaga automatically offers to set up AI on first run. The setup is completely optional - GitSaga works great without it, but AI features provide richer, more structured sagas.
 
 ### `saga capture`
 Manually capture a saga from any commit.
@@ -146,6 +139,9 @@ Check saga completeness and get improvement suggestions.
 
 ### `saga install-hooks`
 Install git hooks for automatic saga capture on commit.
+
+### `saga setup-ai`
+One-command setup for AI features (installs Ollama + downloads model).
 
 ## Example Workflow
 

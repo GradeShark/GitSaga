@@ -87,8 +87,22 @@ def init(ctx):
     console.print("[green][OK] GitSaga repository initialized![/green]")
     console.print(f"• Created .gitsaga/ directory")
     console.print(f"• Configuration saved to .gitsaga/config.json")
+    
+    # Offer to set up AI features
+    console.print("\n[bold]Optional: Set up AI features?[/bold]")
+    console.print("This will install Ollama and download a small AI model (638MB).")
+    console.print("AI features enhance automatic saga capture and structure.")
+    
+    if click.confirm("Set up AI features now?", default=True):
+        from gitsaga.setup import OllamaAutoInstaller
+        installer = OllamaAutoInstaller()
+        installer.full_setup()
+    else:
+        console.print("You can set up AI later with: [cyan]saga setup-ai[/cyan]")
+    
     console.print("\nNext steps:")
     console.print("  • Create your first saga: [cyan]saga commit \"Initial setup\"[/cyan]")
+    console.print("  • Install git hooks: [cyan]saga install-hooks[/cyan]")
     console.print("  • View help: [cyan]saga --help[/cyan]")
 
 
@@ -394,6 +408,10 @@ def capture(ctx, commit, force):
         console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
         sys.exit(1)
     
+    # Auto-setup AI if not configured
+    from gitsaga.setup import check_and_setup_ollama
+    check_and_setup_ollama(silent=True)
+    
     chronicler = AutoChronicler()
     
     if force:
@@ -558,6 +576,22 @@ def validate(ctx, saga_file):
         console.print("[yellow]DSPy not installed. Cannot validate saga structure.[/yellow]")
     except Exception as e:
         console.print(f"[red]Error validating saga: {e}[/red]")
+
+
+@cli.command()
+@click.pass_context  
+def setup_ai(ctx):
+    """Set up AI features (installs Ollama and downloads model)"""
+    show_banner()
+    
+    from gitsaga.setup import OllamaAutoInstaller
+    
+    installer = OllamaAutoInstaller()
+    if installer.full_setup():
+        console.print("\n[green]✨ AI features are configured and ready![/green]")
+        console.print("Try: saga capture --force")
+    else:
+        console.print("\n[yellow]AI setup incomplete. GitSaga will work with basic features.[/yellow]")
 
 
 @cli.command('install-hooks')
