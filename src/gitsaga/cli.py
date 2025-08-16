@@ -780,6 +780,75 @@ def enhance(ctx, commit):
     console.print(f"[green]✓ Enhanced saga saved: {saga_path.name}[/green]")
 
 
+@cli.command()
+@click.option('--dry-run', is_flag=True, help='Preview changes without moving files')
+@click.option('--cleanup', is_flag=True, help='Remove empty directories after organizing')
+@click.pass_context
+def organize(ctx, dry_run, cleanup):
+    """Organize sagas into year/month/week folder structure"""
+    show_banner()
+    if not ctx.obj['is_initialized']:
+        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        sys.exit(1)
+    
+    from .core.organizer import SagaOrganizer
+    
+    organizer = SagaOrganizer(ctx.obj['saga_dir'])
+    
+    # Get current statistics
+    stats = organizer.get_statistics()
+    
+    if stats['unorganized_sagas'] == 0:
+        console.print("[green]✓ All sagas are already organized![/green]")
+        console.print(f"Total sagas: {stats['total_sagas']}")
+        if stats['by_year']:
+            console.print("\n[bold]By Year:[/bold]")
+            for year, count in sorted(stats['by_year'].items()):
+                console.print(f"  {year}: {count} sagas")
+        return
+    
+    console.print(f"[yellow]Found {stats['unorganized_sagas']} unorganized sagas[/yellow]")
+    
+    if dry_run:
+        console.print("\n[bold]DRY RUN - No files will be moved[/bold]")
+    
+    # Organize all sagas
+    moves = organizer.organize_all(dry_run=dry_run)
+    
+    if moves:
+        console.print(f"\n[bold]{'Would move' if dry_run else 'Moving'} {len(moves)} sagas:[/bold]")
+        
+        # Group by year/month for display
+        by_period = {}
+        for old_path, new_path in moves[:10]:  # Show first 10
+            period = '/'.join(new_path.relative_to(organizer.saga_dir).parts[:2])
+            if period not in by_period:
+                by_period[period] = 0
+            by_period[period] += 1
+            
+            console.print(f"  {old_path.name} → {period}/...")
+        
+        if len(moves) > 10:
+            console.print(f"  ... and {len(moves) - 10} more")
+        
+        if not dry_run:
+            console.print(f"\n[green]✓ Organized {len(moves)} sagas[/green]")
+            
+            if cleanup:
+                organizer.cleanup_empty_dirs()
+                console.print("[green]✓ Cleaned up empty directories[/green]")
+    
+    # Show new statistics
+    if not dry_run:
+        new_stats = organizer.get_statistics()
+        console.print("\n[bold]New Structure:[/bold]")
+        for year, count in sorted(new_stats['by_year'].items()):
+            console.print(f"  {year}: {count} sagas")
+    
+    if dry_run:
+        console.print("\n[dim]Run without --dry-run to apply changes[/dim]")
+
+
 @cli.command('install-hooks')
 @click.pass_context
 def install_hooks(ctx):

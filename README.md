@@ -45,6 +45,8 @@ pip install -e .
 saga setup-ai
 ```
 
+**For WSL Users**: See [WSL_INSTALLATION.md](WSL_INSTALLATION.md) for cross-environment setup instructions.
+
 ### Basic Usage
 
 ```bash

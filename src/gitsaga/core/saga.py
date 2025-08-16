@@ -98,8 +98,8 @@ class Saga:
         content = filepath.read_text(encoding='utf-8')
         return cls.from_markdown(content)
     
-    def save(self, directory: Path) -> Path:
-        """Save saga to markdown file in specified directory"""
+    def save(self, directory: Path, auto_organize: bool = True) -> Path:
+        """Save saga to markdown file with automatic date-based organization"""
         directory.mkdir(parents=True, exist_ok=True)
         
         # Generate filename: YYYY-MM-DD-HHMM-title-slug.md
@@ -107,8 +107,18 @@ class Saga:
         title_slug = self._slugify(self.title)[:50]  # Limit length
         filename = f"{timestamp_str}-{title_slug}.md"
         
-        filepath = directory / filename
-        filepath.write_text(self.to_markdown(), encoding='utf-8')
+        # Use auto-organization if enabled
+        if auto_organize:
+            from .organizer import AutoOrganizer
+            organizer = AutoOrganizer(directory, auto_organize=True)
+            
+            # Create temp path and let organizer handle it
+            temp_path = directory / filename
+            temp_path.write_text(self.to_markdown(), encoding='utf-8')
+            filepath = organizer.save_organized(temp_path)
+        else:
+            filepath = directory / filename
+            filepath.write_text(self.to_markdown(), encoding='utf-8')
         
         return filepath
     
