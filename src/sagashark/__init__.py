@@ -1,5 +1,5 @@
 """
-GitSaga - Development Context Manager
+SagaShark - Development Context Manager
 Track the story behind your code
 """
 

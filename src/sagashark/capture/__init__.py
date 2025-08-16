@@ -1,5 +1,5 @@
 """
-Automatic saga capture system for GitSaga v2
+Automatic saga capture system for SagaShark v2
 """
 
 from .significance import SignificanceScorer

@@ -50,7 +50,7 @@ class InteractiveCapturer:
         Interactively capture the valuable information.
         Quick prompts for the essential details.
         """
-        print("\n🎯 GitSaga: This looks like an important debugging session!")
+        print("\n🎯 SagaShark: This looks like an important debugging session!")
         print(f"Commit: {commit_msg[:60]}...")
         print("-" * 60)
         
@@ -193,7 +193,7 @@ class InteractiveCapturer:
         Super quick capture - just the essentials in one prompt.
         For when you don't want to answer multiple questions.
         """
-        print("\n🎯 GitSaga Quick Capture (or press Enter to skip)")
+        print("\n🎯 SagaShark Quick Capture (or press Enter to skip)")
         print("In one line, what was the problem and solution?")
         summary = self._get_input("> ").strip()
         

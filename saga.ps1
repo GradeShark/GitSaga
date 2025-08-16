@@ -1,4 +1,4 @@
-# GitSaga PowerShell Wrapper
+# SagaShark PowerShell Wrapper
 # This script ensures proper execution in PowerShell without console flashing
 
 $env:PYTHONIOENCODING = "utf-8"
@@ -15,5 +15,5 @@ if (-not $python) {
     exit 1
 }
 
-# Run GitSaga
-& $python.Source -m gitsaga.cli $args
+# Run SagaShark
+& $python.Source -m sagashark.cli $args

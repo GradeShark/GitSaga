@@ -3,7 +3,7 @@ DSPy integration for enforcing saga structure and quality.
 
 ⚠️ CRITICAL WARNING: Small LLMs like TinyLlama (1.1B parameters) will hallucinate
 and corrupt your sagas with false information. Only use models with 7B+ parameters.
-GitSaga now defaults to use_ai=False for safety.
+SagaShark now defaults to use_ai=False for safety.
 
 Recommended models:
 - Llama 2 7B or larger
@@ -155,7 +155,7 @@ class SagaEnhancer:
         UNSAFE_MODELS = ['tinyllama', 'phi', 'phi2', 'stablelm', 'pythia']
         if model.lower() in UNSAFE_MODELS:
             raise ValueError(
-                f"❌ CRITICAL: {model} is unsafe for GitSaga due to hallucination risk.\n"
+                f"❌ CRITICAL: {model} is unsafe for SagaShark due to hallucination risk.\n"
                 f"Small models corrupt sagas with false information.\n"
                 f"Please use models with 7B+ parameters: llama2, mistral, mixtral, codellama"
             )

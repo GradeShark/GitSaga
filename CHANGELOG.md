@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to GitSaga will be documented in this file.
+All notable changes to SagaShark will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Rich CLI Interface**: Beautiful formatting, progress indicators, and helpful prompts
 
 ### Changed
-- **Directory Structure**: All sagas now consistently save to `.gitsaga/sagas/` (removed `.sagadex`)
+- **Directory Structure**: All sagas now consistently save to `.sagashark/sagas/` (removed `.sagadex`)
 - **Significance Thresholds**: Bug fixes score 0.70+, critical issues score 1.00
 - **Banner Display**: Now shows only once per session instead of every command
 - **Error Handling**: Graceful fallbacks when AI features unavailable
@@ -29,13 +29,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Interactive capture bug causing UnboundLocalError
-- Directory inconsistency between `.gitsaga` and `.sagadex`
+- Directory inconsistency between `.sagashark` and `.sagadex`
 - Windows Unicode encoding errors
 - PowerShell console flashing issue
 - DSPy warning spam
 
 ### Removed
-- `.sagadex` directory usage (consolidated to `.gitsaga`)
+- `.sagadex` directory usage (consolidated to `.sagashark`)
 
 ## [1.0.0] - 2024-01-01
 

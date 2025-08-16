@@ -1,6 +1,6 @@
 DO NOT LEAVE THE ROOT FOLDER FOR ANY REASON.
 
-STAY WITHIN C:\Users\h444n\OneDrive\Documents\gitsaga
+STAY WITHIN C:\Users\h444n\OneDrive\Documents\SagaShark
 
 IF YOU'RE UNSURE ABOUT SOMETHING, ASK!
 

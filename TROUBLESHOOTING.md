@@ -1,17 +1,17 @@
-# GitSaga Troubleshooting Guide
+# SagaShark Troubleshooting Guide
 
 ## Common Issues and Solutions
 
 ### Installation Issues
 
 #### "saga: command not found"
-**Problem**: After installing GitSaga, the `saga` command isn't recognized.
+**Problem**: After installing SagaShark, the `saga` command isn't recognized.
 
 **Solutions**:
-1. Ensure GitSaga is installed: `pip show gitsaga`
+1. Ensure SagaShark is installed: `pip show sagashark`
 2. If using virtual environment, make sure it's activated
-3. Try using the full module path: `python -m gitsaga.cli`
-4. Reinstall with: `pip install -e .` (from the gitsaga directory)
+3. Try using the full module path: `python -m sagashark.cli`
+4. Reinstall with: `pip install -e .` (from the sagashark directory)
 
 #### PowerShell Console Flashing
 **Problem**: A new console window briefly appears and disappears when running saga commands.
@@ -23,7 +23,7 @@
 ### Ollama/AI Issues
 
 #### "Ollama not found" or AI features not working
-**Problem**: GitSaga can't find Ollama even though it's installed.
+**Problem**: SagaShark can't find Ollama even though it's installed.
 
 **Solutions**:
 1. **Windows**: Restart PowerShell after Ollama installation
@@ -43,7 +43,7 @@
 ### Saga Capture Issues
 
 #### "Commit not significant enough for saga capture"
-**Problem**: GitSaga isn't capturing your commits automatically.
+**Problem**: SagaShark isn't capturing your commits automatically.
 
 **Solutions**:
 1. Check significance score: `saga score HEAD`
@@ -65,10 +65,10 @@
 **Problem**: `saga search` returns no results even though sagas exist.
 
 **Solutions**:
-1. Check saga directory: `ls .gitsaga/sagas/`
+1. Check saga directory: `ls .sagashark/sagas/`
 2. Verify search is looking in right place: `saga status`
 3. Try broader search terms
-4. Rebuild search index (delete `.gitsaga/index/` and search again)
+4. Rebuild search index (delete `.sagashark/index/` and search again)
 
 #### Vector search not working
 **Problem**: Semantic search features unavailable.
@@ -80,11 +80,11 @@
 ### Directory Issues
 
 #### Sagas saving to wrong location
-**Problem**: Some sagas in `.gitsaga/`, others in `.sagadex/`.
+**Problem**: Some sagas in `.sagashark/`, others in `.sagadex/`.
 
-**Solution**: Fixed in v2.0.0. All sagas now save to `.gitsaga/sagas/`.
+**Solution**: Fixed in v2.0.0. All sagas now save to `.sagashark/sagas/`.
 - Remove old directory: `rm -rf .sagadex`
-- Move any important sagas: `mv .sagadex/sagas/* .gitsaga/sagas/`
+- Move any important sagas: `mv .sagadex/sagas/* .sagashark/sagas/`
 
 ### Windows-Specific Issues
 
@@ -102,10 +102,10 @@
 **Problem**: Windows doesn't recognize the saga command.
 
 **Solutions**:
-1. Use the batch wrapper: `saga.bat` (in the gitsaga directory)
+1. Use the batch wrapper: `saga.bat` (in the sagashark directory)
 2. Or create an alias in PowerShell:
    ```powershell
-   function saga { python -m gitsaga.cli $args }
+   function saga { python -m sagashark.cli $args }
    ```
 
 ### Git Hook Issues
@@ -123,24 +123,24 @@
 
 If these solutions don't resolve your issue:
 
-1. Check the [GitHub Issues](https://github.com/yourusername/gitsaga/issues)
+1. Check the [GitHub Issues](https://github.com/GradeShark/SagaShark/issues)
 2. Run with verbose output: `saga --debug [command]`
 3. Check Python version compatibility: `python --version` (requires 3.8+)
-4. Verify all dependencies: `pip list | grep -E "gitsaga|click|rich|gitpython"`
+4. Verify all dependencies: `pip list | grep -E "sagashark|click|rich|gitpython"`
 
 ## Quick Fixes
 
-### Reset GitSaga completely:
+### Reset SagaShark completely:
 ```bash
-rm -rf .gitsaga
+rm -rf .sagashark
 saga init
 saga install-hooks
 ```
 
 ### Reinstall with all dependencies:
 ```bash
-pip uninstall gitsaga -y
-cd /path/to/gitsaga
+pip uninstall sagashark -y
+cd /path/to/sagashark
 pip install -e ".[all]"
 ```
 

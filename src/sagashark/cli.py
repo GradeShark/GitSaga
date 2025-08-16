@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-GitSaga CLI - Development Context Manager
+SagaShark CLI - Development Context Manager
 Track the story behind your code
 """
 
@@ -71,7 +71,7 @@ def cli(ctx):
     """SagaShark - Track the story behind your code"""
     ctx.ensure_object(dict)
     
-    # Check if we're in a GitSaga repository
+    # Check if we're in a SagaShark repository
     saga_dir = Path.cwd() / '.sagashark'
     ctx.obj['saga_dir'] = saga_dir
     ctx.obj['is_initialized'] = saga_dir.exists()
@@ -85,19 +85,19 @@ def cli(ctx):
 @cli.command()
 @click.pass_context
 def init(ctx):
-    """Initialize a GitSaga repository"""
+    """Initialize a SagaShark repository"""
     show_banner()
     saga_dir = ctx.obj['saga_dir']
     
     if saga_dir.exists():
-        console.print("[yellow]Warning: GitSaga already initialized in this directory[/yellow]")
+        console.print("[yellow]Warning: SagaShark already initialized in this directory[/yellow]")
         if not click.confirm("Reinitialize?"):
             return
     
     # Initialize repository
     config = Config.init_repository(Path.cwd())
     
-    console.print("[green][OK] GitSaga repository initialized![/green]")
+    console.print("[green][OK] SagaShark repository initialized![/green]")
     console.print(f"• Created .sagashark/ directory")
     console.print(f"• Configuration saved to .sagashark/config.json")
     
@@ -135,13 +135,13 @@ def init(ctx):
     console.print("AI features enhance automatic saga capture and structure.")
     
     if click.confirm("Set up AI features now?", default=True):
-        from gitsaga.setup import OllamaAutoInstaller
+        from sagashark.setup import OllamaAutoInstaller
         installer = OllamaAutoInstaller()
         installer.full_setup()
     else:
         console.print("You can set up AI later with: [cyan]saga setup-ai[/cyan]")
     
-    console.print("\n[green]✨ GitSaga is ready![/green]")
+    console.print("\n[green]✨ SagaShark is ready![/green]")
     console.print("\nNext steps:")
     console.print("  • Create your first saga: [cyan]saga commit \"Initial setup\"[/cyan]")
     console.print("  • Search for sagas: [cyan]saga search \"keyword\"[/cyan]")
@@ -160,7 +160,7 @@ def commit(ctx, message, saga_type, content, tags):
     """Create a new saga"""
     show_banner()
     if not ctx.obj['is_initialized']:
-        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        console.print("[red]X SagaShark not initialized. Run 'saga init' first.[/red]")
         sys.exit(1)
     
     git = ctx.obj['git']
@@ -235,12 +235,12 @@ def search(ctx, query, limit):
     """Search for sagas"""
     show_banner()
     if not ctx.obj['is_initialized']:
-        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        console.print("[red]X SagaShark not initialized. Run 'saga init' first.[/red]")
         sys.exit(1)
     
     # Try hybrid search first
     try:
-        from gitsaga.search.vector_search import HybridSearcher
+        from sagashark.search.vector_search import HybridSearcher
         searcher = HybridSearcher(ctx.obj['saga_dir'])
         results = searcher.search(query, limit=limit, mode='hybrid')
         console.print("[dim]Using hybrid search (text + semantic)[/dim]")
@@ -286,7 +286,7 @@ def log(ctx, limit, since):
     """Show recent sagas chronologically"""
     show_banner()
     if not ctx.obj['is_initialized']:
-        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        console.print("[red]X SagaShark not initialized. Run 'saga init' first.[/red]")
         sys.exit(1)
     
     searcher = ctx.obj['searcher']
@@ -345,7 +345,7 @@ def log(ctx, limit, since):
 def show(ctx, saga_id):
     """Display a specific saga"""
     if not ctx.obj['is_initialized']:
-        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        console.print("[red]X SagaShark not initialized. Run 'saga init' first.[/red]")
         sys.exit(1)
     
     # Find saga by ID
@@ -393,10 +393,10 @@ def show(ctx, saga_id):
 @cli.command()
 @click.pass_context
 def status(ctx):
-    """Show GitSaga repository status"""
+    """Show SagaShark repository status"""
     show_banner()
     if not ctx.obj['is_initialized']:
-        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        console.print("[red]X SagaShark not initialized. Run 'saga init' first.[/red]")
         sys.exit(1)
     
     saga_dir = ctx.obj['saga_dir'] / 'sagas'
@@ -418,7 +418,7 @@ def status(ctx):
     git_info = git.get_repo_info()
     
     # Display status
-    console.print("[bold]GitSaga Repository Status[/bold]\n")
+    console.print("[bold]SagaShark Repository Status[/bold]\n")
     
     console.print(f"Total sagas: [cyan]{total_sagas}[/cyan]")
     
@@ -456,11 +456,11 @@ def capture(ctx, commit, force):
     """Capture a saga from a git commit"""
     show_banner()
     if not ctx.obj['is_initialized']:
-        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        console.print("[red]X SagaShark not initialized. Run 'saga init' first.[/red]")
         sys.exit(1)
     
     # Auto-setup AI if not configured
-    from gitsaga.setup import check_and_setup_ollama
+    from sagashark.setup import check_and_setup_ollama
     check_and_setup_ollama(silent=True)
     
     chronicler = AutoChronicler()
@@ -486,7 +486,7 @@ def monitor(ctx, since, dry_run):
     """Monitor recent commits and capture significant sagas"""
     show_banner()
     if not ctx.obj['is_initialized']:
-        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        console.print("[red]X SagaShark not initialized. Run 'saga init' first.[/red]")
         sys.exit(1)
     
     chronicler = AutoChronicler()
@@ -504,7 +504,7 @@ def score(ctx, commit):
     """Score a commit's significance for saga capture"""
     show_banner()
     if not ctx.obj['is_initialized']:
-        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        console.print("[red]X SagaShark not initialized. Run 'saga init' first.[/red]")
         sys.exit(1)
     
     chronicler = AutoChronicler()
@@ -545,7 +545,7 @@ def template(ctx, saga_type, output):
     show_banner()
     
     try:
-        from gitsaga.butler.dspy_integration import SagaEnhancer
+        from sagashark.butler.dspy_integration import SagaEnhancer
         enhancer = SagaEnhancer(use_local=False)  # Don't need AI for templates
         template_content = enhancer.generate_saga_template(saga_type)
         
@@ -592,8 +592,8 @@ def validate(ctx, saga_file):
         return
     
     try:
-        from gitsaga.butler.dspy_integration import SagaEnhancer
-        from gitsaga.core.saga import Saga
+        from sagashark.butler.dspy_integration import SagaEnhancer
+        from sagashark.core.saga import Saga
         
         # Load saga
         saga = Saga.from_file(Path(saga_file))
@@ -635,11 +635,11 @@ def reindex(ctx):
     """Rebuild the vector search index"""
     show_banner()
     if not ctx.obj['is_initialized']:
-        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        console.print("[red]X SagaShark not initialized. Run 'saga init' first.[/red]")
         sys.exit(1)
     
     try:
-        from gitsaga.search.vector_search import VectorSearcher
+        from sagashark.search.vector_search import VectorSearcher
         
         console.print("Building vector search index...")
         searcher = VectorSearcher(ctx.obj['saga_dir'])
@@ -665,11 +665,11 @@ def find_similar(ctx, saga_id, limit):
     """Find sagas similar to a given saga"""
     show_banner()
     if not ctx.obj['is_initialized']:
-        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        console.print("[red]X SagaShark not initialized. Run 'saga init' first.[/red]")
         sys.exit(1)
     
     try:
-        from gitsaga.search.vector_search import VectorSearcher
+        from sagashark.search.vector_search import VectorSearcher
         
         searcher = VectorSearcher(ctx.obj['saga_dir'])
         results = searcher.find_similar(saga_id, limit=limit)
@@ -700,19 +700,19 @@ def uninstall_help(ctx):
     """Show uninstall instructions"""
     show_banner()
     
-    console.print("\n[bold]🗑️  How to Uninstall GitSaga[/bold]\n")
+    console.print("\n[bold]🗑️  How to Uninstall SagaShark[/bold]\n")
     
     console.print("[bold]Quick Uninstall:[/bold]")
-    console.print("  pip uninstall gitsaga\n")
+    console.print("  pip uninstall sagashark\n")
     
     console.print("[bold]Complete Cleanup:[/bold]")
-    console.print("  1. Uninstall package:     [cyan]pip uninstall gitsaga[/cyan]")
+    console.print("  1. Uninstall package:     [cyan]pip uninstall sagashark[/cyan]")
     console.print("  2. Remove git hooks:      [cyan]rm .git/hooks/post-commit[/cyan]")
     console.print("  3. Remove saga data:      [cyan]rm -rf .sagadex/[/cyan]")
     console.print("  4. Or keep sagas:         [cyan]rm .sagadex/config.json[/cyan]\n")
     
     console.print("[bold]Using Uninstall Script:[/bold]")
-    console.print("  [cyan]python path/to/gitsaga/uninstall.py[/cyan]")
+    console.print("  [cyan]python path/to/sagashark/uninstall.py[/cyan]")
     console.print("  Options:")
     console.print("    --keep-sagas     Keep your saga documentation (default)")
     console.print("    --remove-sagas   Remove everything")
@@ -728,7 +728,7 @@ def uninstall_help(ctx):
     console.print("[bold]💡 Tip:[/bold] Keep your sagas! They're valuable documentation.")
     console.print("")
     console.print("[bold]To Reinstall:[/bold]")
-    console.print("  [cyan]pip install gitsaga[/cyan]")
+    console.print("  [cyan]pip install sagashark[/cyan]")
     console.print("  [cyan]saga init[/cyan]")
 
 
@@ -753,10 +753,10 @@ def setup_ai(ctx):
     console.print("\nSee HALLUCINATION_WARNING.md for details.")
     
     if not click.confirm("\nDo you understand the risks and want to proceed?"):
-        console.print("[green]Good choice! GitSaga works perfectly without AI.[/green]")
+        console.print("[green]Good choice! SagaShark works perfectly without AI.[/green]")
         return
     
-    from gitsaga.setup import OllamaAutoInstaller
+    from sagashark.setup import OllamaAutoInstaller
     
     installer = OllamaAutoInstaller()
     if installer.full_setup():
@@ -764,7 +764,7 @@ def setup_ai(ctx):
         console.print("[bold yellow]Remember: Only use 7B+ parameter models![/bold yellow]")
         console.print("Try: saga capture --force")
     else:
-        console.print("\n[yellow]AI setup incomplete. GitSaga will work with basic features.[/yellow]")
+        console.print("\n[yellow]AI setup incomplete. SagaShark will work with basic features.[/yellow]")
 
 
 @cli.command()
@@ -774,7 +774,7 @@ def enhance(ctx, commit):
     """Add high-value debugging details to a saga"""
     show_banner()
     if not ctx.obj['is_initialized']:
-        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        console.print("[red]X SagaShark not initialized. Run 'saga init' first.[/red]")
         sys.exit(1)
     
     from .capture.interactive_capture import InteractiveCapturer
@@ -817,7 +817,7 @@ def organize(ctx, dry_run, cleanup):
     """Organize sagas into year/month/week folder structure"""
     show_banner()
     if not ctx.obj['is_initialized']:
-        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        console.print("[red]X SagaShark not initialized. Run 'saga init' first.[/red]")
         sys.exit(1)
     
     from .core.organizer import SagaOrganizer
@@ -884,7 +884,7 @@ def install_hooks(ctx):
     """Install git hooks for automatic saga capture"""
     show_banner()
     if not ctx.obj['is_initialized']:
-        console.print("[red]X GitSaga not initialized. Run 'saga init' first.[/red]")
+        console.print("[red]X SagaShark not initialized. Run 'saga init' first.[/red]")
         sys.exit(1)
     
     import shutil

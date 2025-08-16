@@ -1,6 +1,6 @@
-# Installing Ollama for GitSaga AI Features
+# Installing Ollama for SagaShark AI Features
 
-GitSaga works great without AI, but if you want enhanced saga generation and structured documentation, you can install Ollama and TinyLlama.
+SagaShark works great without AI, but if you want enhanced saga generation and structured documentation, you can install Ollama and TinyLlama.
 
 ## Quick Install (Windows)
 
@@ -30,7 +30,7 @@ ollama --version
 # Check TinyLlama is downloaded
 ollama list
 
-# Test GitSaga with AI
+# Test SagaShark with AI
 saga capture --commit HEAD
 ```
 

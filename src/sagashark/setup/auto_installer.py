@@ -1,6 +1,6 @@
 """
 Auto-installer for Ollama and required models.
-Makes GitSaga truly zero-friction to set up.
+Makes SagaShark truly zero-friction to set up.
 """
 
 import os
@@ -239,14 +239,14 @@ class OllamaAutoInstaller:
     
     def full_setup(self):
         """Complete setup: install Ollama and download model"""
-        print("\n GitSaga AI Setup")
+        print("\n SagaShark AI Setup")
         print("-" * 40)
         
         # Step 1: Install Ollama if needed
         if not self.is_ollama_installed():
             if not self.install_ollama():
                 print("\n[WARNING] Could not install Ollama automatically.")
-                print("GitSaga will work without AI features.")
+                print("SagaShark will work without AI features.")
                 return False
         
         # Step 2: Start server if needed
@@ -258,7 +258,7 @@ class OllamaAutoInstaller:
         
         # Step 3: Download model
         if not self.has_model(self.DEFAULT_MODEL):
-            print(f"\nGitSaga uses {self.DEFAULT_MODEL} for AI features.")
+            print(f"\nSagaShark uses {self.DEFAULT_MODEL} for AI features.")
             response = input("Download now? (y/n): ").lower().strip()
             
             if response == 'y':
@@ -275,13 +275,13 @@ class OllamaAutoInstaller:
             print("\n[SUCCESS] AI features are ready to use!")
             return True
         
-        print("\nGitSaga will work without AI enhancement.")
+        print("\nSagaShark will work without AI enhancement.")
         return False
 
 
 def check_and_setup_ollama(silent=False):
     """
-    Quick check and setup function to be called from other parts of GitSaga.
+    Quick check and setup function to be called from other parts of SagaShark.
     
     Args:
         silent: If True, suppress output unless action is needed

@@ -8,13 +8,13 @@ import sys
 import os
 from pathlib import Path
 
-# Add gitsaga to path
+# Add sagashark to path
 repo_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(repo_root / 'src'))
 
-from gitsaga.capture.auto_chronicler import AutoChronicler
-from gitsaga.capture.interactive_capture import InteractiveCapturer
-from gitsaga.capture.significance import SignificanceScorer
+from sagashark.capture.auto_chronicler import AutoChronicler
+from sagashark.capture.interactive_capture import InteractiveCapturer
+from sagashark.capture.significance import SignificanceScorer
 
 
 def main():
@@ -33,7 +33,7 @@ def main():
         
         # Check if this is significant
         if score < 0.3:
-            print("GitSaga: Commit not significant enough for saga capture")
+            print("SagaShark: Commit not significant enough for saga capture")
             return
         
         # Capture the basic saga
@@ -54,20 +54,20 @@ def main():
                         saga
                     )
                     saga = enhanced_saga
-                    print(f"GitSaga: Enhanced saga captured with debugging context!")
+                    print(f"SagaShark: Enhanced saga captured with debugging context!")
                 except (KeyboardInterrupt, EOFError):
-                    print("GitSaga: Skipped interactive capture")
+                    print("SagaShark: Skipped interactive capture")
             else:
                 # Non-interactive environment, just capture basic saga
-                print(f"GitSaga: High-value commit detected! Run 'saga enhance HEAD' to add debugging details.")
+                print(f"SagaShark: High-value commit detected! Run 'saga enhance HEAD' to add debugging details.")
         
         # Save the saga
         saga_path = saga.save(Path.cwd() / '.sagashark' / 'sagas')
-        print(f"GitSaga: Captured saga '{saga.title}' -> {saga_path.name}")
+        print(f"SagaShark: Captured saga '{saga.title}' -> {saga_path.name}")
             
     except Exception as e:
         # Don't fail the commit if saga capture fails
-        print(f"GitSaga: Error during capture: {e}")
+        print(f"SagaShark: Error during capture: {e}")
         
 
 if __name__ == '__main__':

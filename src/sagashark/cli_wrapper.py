@@ -24,7 +24,7 @@ def main():
         os.environ['PYTHONIOENCODING'] = 'utf-8'
     
     # Import and run the actual CLI
-    from gitsaga.cli import cli
+    from sagashark.cli import cli
     cli()
 
 if __name__ == '__main__':

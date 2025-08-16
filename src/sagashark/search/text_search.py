@@ -1,5 +1,5 @@
 """
-Simple text-based search for GitSaga MVP
+Simple text-based search for SagaShark MVP
 No dependencies on vector databases or ML models
 """
 

@@ -1,5 +1,5 @@
 """
-GitSaga MCP Server - Expose GitSaga as an MCP tool for Claude
+SagaShark MCP Server - Expose SagaShark as an MCP tool for Claude
 """
 
 import json
@@ -17,11 +17,11 @@ from .capture.auto_chronicler import AutoChronicler
 from .capture.significance import SignificanceScorer, CommitContext
 
 
-class GitSagaMCPServer:
-    """MCP Server exposing GitSaga functionality to Claude"""
+class SagaSharkMCPServer:
+    """MCP Server exposing SagaShark functionality to Claude"""
     
     def __init__(self):
-        self.server = Server("gitsaga")
+        self.server = Server("sagashark")
         self.saga_dir = Path.cwd() / '.sagashark'
         self.setup_handlers()
     
@@ -30,7 +30,7 @@ class GitSagaMCPServer:
         
         @self.server.list_tools()
         async def handle_list_tools() -> List[types.Tool]:
-            """List available GitSaga tools"""
+            """List available SagaShark tools"""
             return [
                 types.Tool(
                     name="search_sagas",
@@ -226,7 +226,7 @@ class GitSagaMCPServer:
                 read_stream,
                 write_stream,
                 InitializationOptions(
-                    server_name="gitsaga",
+                    server_name="sagashark",
                     server_version="2.0.0",
                     capabilities=self.server.get_capabilities(
                         notification_options=NotificationOptions(),
@@ -238,7 +238,7 @@ class GitSagaMCPServer:
 
 def main():
     """Entry point for MCP server"""
-    server = GitSagaMCPServer()
+    server = SagaSharkMCPServer()
     asyncio.run(server.run())
 
 

@@ -502,7 +502,7 @@ class AutoChronicler:
                 content.append(f"**Development Tool**: {session.tool}")
             
             content.append("")
-            content.append("*Generated with GitSaga AutoChronicler + DSPy*")
+            content.append("*Generated with SagaShark AutoChronicler + DSPy*")
             
             return '\n'.join(content)
             

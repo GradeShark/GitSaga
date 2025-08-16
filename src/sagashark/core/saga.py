@@ -1,5 +1,5 @@
 """
-Core Saga model for GitSaga
+Core Saga model for SagaShark
 Handles creation, serialization, and deserialization of saga documents
 """
 

@@ -3,7 +3,7 @@
 This guide explains how to install and use SagaShark in Windows Subsystem for Linux (WSL) when SagaShark is already installed on Windows.
 
 ## Prerequisites
-- SagaShark installed on Windows (in `C:\Users\[username]\OneDrive\Documents\gitsaga`)
+- SagaShark installed on Windows (in `C:\Users\[username]\OneDrive\Documents\SagaShark`)
 - WSL with Python 3 installed
 - Access to Windows filesystem from WSL (via `/mnt/c/`)
 
@@ -25,7 +25,7 @@ Add the following content:
 # Runs Windows SagaShark from WSL environment
 
 # Set Python path to find SagaShark modules
-export PYTHONPATH=/mnt/c/Users/h444n/OneDrive/Documents/gitsaga/src:$PYTHONPATH
+export PYTHONPATH=/mnt/c/Users/h444n/OneDrive/Documents/SagaShark/src:$PYTHONPATH
 
 # Run SagaShark as a Python module (handles relative imports correctly)
 python3 -m sagashark.cli "$@"
@@ -72,7 +72,7 @@ saga install-hooks
 ### Issue: Import errors
 **Solution**: Verify the PYTHONPATH is correctly set to the `src` directory:
 ```bash
-export PYTHONPATH=/mnt/c/Users/[username]/OneDrive/Documents/gitsaga/src:$PYTHONPATH
+export PYTHONPATH=/mnt/c/Users/[username]/OneDrive/Documents/SagaShark/src:$PYTHONPATH
 ```
 
 ### Issue: Permission denied
@@ -133,7 +133,7 @@ When SagaShark is updated on Windows, the changes are immediately available in W
 
 ```bash
 # On Windows (or from WSL)
-cd /mnt/c/Users/[username]/OneDrive/Documents/gitsaga
+cd /mnt/c/Users/[username]/OneDrive/Documents/SagaShark
 git pull origin main
 
 # Changes are immediately available in WSL - no reinstallation needed!
@@ -154,7 +154,7 @@ If you encounter issues:
 1. Verify Python 3 is installed: `python3 --version`
 2. Check the wrapper script path: `cat ~/saga.sh`
 3. Verify PYTHONPATH: `echo $PYTHONPATH`
-4. Test module import: `python3 -c "import sys; sys.path.insert(0, '/mnt/c/Users/h444n/OneDrive/Documents/gitsaga/src'); import gitsaga"`
+4. Test module import: `python3 -c "import sys; sys.path.insert(0, '/mnt/c/Users/h444n/OneDrive/Documents/SagaShark/src'); import sagashark"`
 
 ## Credits
 

@@ -1,5 +1,5 @@
 """
-Setup utilities for GitSaga
+Setup utilities for SagaShark
 """
 
 from .auto_installer import OllamaAutoInstaller, check_and_setup_ollama

@@ -1,4 +1,4 @@
-# GitSaga Development Documentation
+# SagaShark Development Documentation
 
 ## Version 1.0 MVP - Implementation Report
 
@@ -10,7 +10,7 @@
 
 ## What Was Built
 
-GitSaga is a **100% local, git-native development context manager** that helps developers track the story behind their code. It captures debugging sessions, architectural decisions, and implementation patterns as "sagas" - markdown documents with rich metadata that are versioned alongside your code.
+SagaShark is a **100% local, git-native development context manager** that helps developers track the story behind their code. It captures debugging sessions, architectural decisions, and implementation patterns as "sagas" - markdown documents with rich metadata that are versioned alongside your code.
 
 ### Core Features Implemented
 
@@ -45,7 +45,7 @@ GitSaga is a **100% local, git-native development context manager** that helps d
 ### Directory Structure
 ```
 project/
-└── .gitsaga/
+└── .sagashark/
     ├── config.json          # Configuration
     ├── sagas/              # Markdown files (git-tracked)
     │   ├── main/           # Main branch sagas
@@ -221,9 +221,9 @@ saga log --limit=5
 ## File Structure
 
 ```
-gitsaga/
+sagashark/
 ├── src/
-│   └── gitsaga/
+│   └── sagashark/
 │       ├── __init__.py
 │       ├── cli.py              # Main CLI with commands
 │       ├── cli_wrapper.py      # Encoding wrapper for Windows
@@ -299,7 +299,7 @@ The MVP successfully achieves:
 
 ## Conclusion
 
-GitSaga MVP is a fully functional development context manager that solves the real problem of losing valuable debugging and implementation context. It's simple, fast, and requires zero infrastructure - just `pip install` and start tracking your development stories.
+SagaShark MVP is a fully functional development context manager that solves the real problem of losing valuable debugging and implementation context. It's simple, fast, and requires zero infrastructure - just `pip install` and start tracking your development stories.
 
 The architecture is intentionally simple: markdown files in folders, searched with Python. This makes it hackable, portable, and sustainable. No complex dependencies means it will still work in 10 years.
 

@@ -22,7 +22,7 @@ SagaShark is a local-first development context manager that automatically captur
 
 ### 🤖 Optional AI Enhancement
 
-⚠️ **CRITICAL WARNING**: Small LLMs (under 7B parameters) like TinyLlama can **hallucinate and corrupt your sagas** with false information. GitSaga now defaults to `use_ai=False` for safety. Only enable AI with larger models (7B+ parameters recommended).
+⚠️ **CRITICAL WARNING**: Small LLMs (under 7B parameters) like TinyLlama can **hallucinate and corrupt your sagas** with false information. SagaShark now defaults to `use_ai=False` for safety. Only enable AI with larger models (7B+ parameters recommended).
 
 - **Local LLM Support**: Ollama with 7B+ parameter models ONLY
 - **Structured Generation**: DSPy ensures consistent formatting
@@ -97,7 +97,7 @@ A saga is a markdown document that captures the context around a piece of develo
 ```
 your-project/
 └── .sagashark/
-    ├── config.json        # GitSaga configuration
+    ├── config.json        # SagaShark configuration
     ├── sagas/            # Your saga documents (git-tracked)
     │   ├── main/         # Sagas from main branch
     │   │   ├── debugging/
@@ -110,7 +110,7 @@ your-project/
 ## CLI Commands
 
 ### `saga init`
-Initialize GitSaga in the current repository.
+Initialize SagaShark in the current repository.
 
 ### `saga commit <message>`
 Create a new saga with the given message as the title.
@@ -201,16 +201,16 @@ One-command setup for AI features (installs Ollama + downloads model).
 
 ## Uninstalling
 
-To uninstall GitSaga:
+To uninstall SagaShark:
 ```bash
 # Quick uninstall
-pip uninstall gitsaga
+pip uninstall sagashark
 
 # For complete cleanup instructions
 saga uninstall-help
 
 # Or use the uninstall script
-python path/to/gitsaga/uninstall.py --keep-sagas
+python path/to/sagashark/uninstall.py --keep-sagas
 ```
 
 ## Example Workflow
@@ -286,22 +286,22 @@ Implemented Redis distributed lock to prevent concurrent token refreshes:
 
 ## Contributing
 
-GitSaga is in early development. Contributions, ideas, and feedback are welcome!
+SagaShark is in early development. Contributions, ideas, and feedback are welcome!
 
 ## License
 
 MIT License - See LICENSE file for details
 
-## Why GitSaga?
+## Why SagaShark?
 
-Every debugging session teaches something worth remembering. GitSaga ensures that knowledge isn't lost when you close your terminal. It's like having perfect memory for your development journey.
+Every debugging session teaches something worth remembering. SagaShark ensures that knowledge isn't lost when you close your terminal. It's like having perfect memory for your development journey.
 
 **Never debug the same problem twice.**
 
 ## Revolutionary Insights: Living Documents & AI Context
 
 ### 📝 Living Documents, Not Frozen Commits
-Traditional git commits are frozen in time. GitSaga creates **editable markdown files** you can enhance forever:
+Traditional git commits are frozen in time. SagaShark creates **editable markdown files** you can enhance forever:
 - Open any saga in your IDE and journal directly - no commands needed
 - Add debugging notes during investigation
 - Append post-mortem lessons after resolution  
@@ -309,9 +309,9 @@ Traditional git commits are frozen in time. GitSaga creates **editable markdown 
 - Your `.sagashark/sagas/` folder becomes a lab notebook that writes itself, then grows with your insights
 
 ### 🚀 10x Faster AI Context Retrieval
-GitSaga transforms git from sequential archive to **parallel-accessible knowledge base**:
+SagaShark transforms git from sequential archive to **parallel-accessible knowledge base**:
 
-**Without GitSaga**: Sequential, slow access
+**Without SagaShark**: Sequential, slow access
 ```bash
 git log                    # Find commits
 git show abc123            # View one at a time
@@ -319,7 +319,7 @@ git show def456            # Repeat for each...
 # Result: Slow, token-intensive for AI assistants
 ```
 
-**With GitSaga**: Parallel, instant access
+**With SagaShark**: Parallel, instant access
 ```bash
 saga search "authentication"     # ALL auth work ever, instantly
 ls .sagashark/sagas/2025/08/week-*  # Entire week's context at once
@@ -329,7 +329,7 @@ grep -r "timeout" .sagashark/sagas  # Every timeout issue, immediately
 AI assistants can now consume your **entire debugging history** in one operation instead of dozens of sequential git commands. This is game-changing for AI-assisted development.
 
 ### 🎯 The Real Value
-GitSaga's killer feature isn't AI enhancement - it's **structural optimization**:
+SagaShark's killer feature isn't AI enhancement - it's **structural optimization**:
 1. Turns frozen commits into living documents for human journaling
 2. Turns sequential git into parallel-accessible context for AI assistants
 3. Template-based approach ensures accuracy without AI risks

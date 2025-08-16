@@ -1,14 +1,14 @@
-# GitSaga PowerShell Alias Installer
+# SagaShark PowerShell Alias Installer
 # This creates a permanent 'saga' command that doesn't flash
 
-Write-Host "Installing GitSaga PowerShell alias..." -ForegroundColor Green
+Write-Host "Installing SagaShark PowerShell alias..." -ForegroundColor Green
 
 # Create the saga function
 $sagaFunction = @'
 function saga {
     $env:PYTHONIOENCODING = "utf-8"
     [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-    python -m gitsaga.cli $args
+    python -m sagashark.cli $args
 }
 '@
 
@@ -22,7 +22,7 @@ if (!(Test-Path $PROFILE)) {
 $profileContent = Get-Content $PROFILE -Raw -ErrorAction SilentlyContinue
 if ($profileContent -notlike "*function saga*") {
     # Add the function to profile
-    Add-Content $PROFILE "`n# GitSaga Command (no console flashing)"
+    Add-Content $PROFILE "`n# SagaShark Command (no console flashing)"
     Add-Content $PROFILE $sagaFunction
     Write-Host "✓ Added 'saga' command to PowerShell profile" -ForegroundColor Green
     Write-Host ""
@@ -41,7 +41,7 @@ $sagaBatPath = Join-Path $pythonScripts "saga-nf.bat"
 $batContent = @"
 @echo off
 set PYTHONIOENCODING=utf-8
-python -m gitsaga.cli %*
+python -m sagashark.cli %*
 "@
 
 Set-Content $sagaBatPath $batContent -Encoding ASCII

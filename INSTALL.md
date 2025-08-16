@@ -1,10 +1,10 @@
-# GitSaga Installation & Testing Guide
+# SagaShark Installation & Testing Guide
 
 ## 🚀 Quick Install & Test
 
-### 1. Install GitSaga
+### 1. Install SagaShark
 ```bash
-# From the gitsaga directory:
+# From the sagashark directory:
 pip install -e .
 
 # Or for a clean install:
@@ -16,12 +16,12 @@ pip install .
 # Navigate to any git repository
 cd /path/to/your/project
 
-# Initialize GitSaga
+# Initialize SagaShark
 saga init
 # (It will prompt to set up AI features - say yes!)
 
 # Test manual saga creation
-saga commit "Testing GitSaga installation"
+saga commit "Testing SagaShark installation"
 
 # Test automatic capture from recent commits
 saga monitor --since HEAD~5
@@ -146,12 +146,12 @@ saga status            # Should show repository stats
 
 1. **Set up git hooks**: `saga install-hooks`
 2. **Import existing commits**: `saga monitor --since HEAD~50`
-3. **Customize settings**: Edit `.sagadex/config.json`
+3. **Customize settings**: Edit `.sagashark/config.json`
 4. **Create your first real saga** after debugging something!
 
 ## 💡 Pro Tips
 
-- GitSaga works great without AI, but AI makes it magical
+- SagaShark works great without AI, but AI makes it magical
 - Run `saga capture --force` after any significant debugging session
 - Use `saga template debugging` to document complex bugs
 - The more sagas you create, the better the search becomes

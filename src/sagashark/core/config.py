@@ -1,5 +1,5 @@
 """
-Configuration management for GitSaga
+Configuration management for SagaShark
 """
 
 import json
@@ -8,7 +8,7 @@ from typing import Dict, Any, Optional
 
 
 class Config:
-    """Manage GitSaga configuration"""
+    """Manage SagaShark configuration"""
     
     DEFAULT_CONFIG = {
         'version': '0.1.0',
@@ -59,21 +59,21 @@ class Config:
     
     @classmethod
     def init_repository(cls, path: Path) -> 'Config':
-        """Initialize a new GitSaga repository"""
-        gitsaga_dir = path / '.sagashark'
-        gitsaga_dir.mkdir(exist_ok=True)
+        """Initialize a new SagaShark repository"""
+        sagashark_dir = path / '.sagashark'
+        sagashark_dir.mkdir(exist_ok=True)
         
         # Create directory structure
-        (gitsaga_dir / 'sagas').mkdir(exist_ok=True)
-        (gitsaga_dir / 'index').mkdir(exist_ok=True)
+        (sagashark_dir / 'sagas').mkdir(exist_ok=True)
+        (sagashark_dir / 'index').mkdir(exist_ok=True)
         
         # Create and save default config
-        config = cls(gitsaga_dir / 'config.json')
+        config = cls(sagashark_dir / 'config.json')
         config.save()
         
         # Create .gitignore for index directory
-        gitignore_path = gitsaga_dir / '.gitignore'
-        gitignore_content = "# GitSaga index files (regeneratable)\nindex/\n"
+        gitignore_path = sagashark_dir / '.gitignore'
+        gitignore_content = "# SagaShark index files (regeneratable)\nindex/\n"
         gitignore_path.write_text(gitignore_content)
         
         return config

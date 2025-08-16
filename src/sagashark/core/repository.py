@@ -1,5 +1,5 @@
 """
-Git repository integration for GitSaga
+Git repository integration for SagaShark
 Safe, read-only git operations to capture context
 """
 
