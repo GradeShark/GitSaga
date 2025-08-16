@@ -42,7 +42,7 @@ class AutoChronicler:
     for significant debugging sessions and implementations.
     """
     
-    def __init__(self, repo_path: Path = None, use_ai: bool = True):
+    def __init__(self, repo_path: Path = None, use_ai: bool = False):
         self.repo_path = repo_path or Path.cwd()
         self.repo = GitRepository(self.repo_path)
         self.scorer = SignificanceScorer()

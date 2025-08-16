@@ -40,19 +40,29 @@ def show_banner():
     # Use environment variable to track if banner was shown
     if not os.environ.get('GITSAGA_BANNER_SHOWN'):
         try:
+            # Set encoding for Windows
+            if sys.platform == 'win32':
+                sys.stdout.reconfigure(encoding='utf-8')
+        except:
+            pass
+        
+        try:
             # Try to print with Rich console
             console.print(BANNER, style="bold cyan")
             console.print("  Track the story behind your code", style="dim")
-            console.print("  Version 0.1.0 | Type 'saga --help' for commands\n", style="dim")
-            # Mark banner as shown
-            os.environ['GITSAGA_BANNER_SHOWN'] = '1'
-        except UnicodeEncodeError:
-            # Fallback to direct print with UTF-8 encoding
-            print(BANNER)
-            print("  Track the story behind your code")
-            print("  Version 0.1.0 | Type 'saga --help' for commands\n")
-            # Mark banner as shown
-            os.environ['GITSAGA_BANNER_SHOWN'] = '1'
+            console.print("  Version 2.0.0 | Type 'saga --help' for commands\n", style="dim")
+        except Exception:
+            # Fallback to simple print - should always work with new ASCII banner
+            try:
+                print(BANNER)
+                print("  Track the story behind your code")
+                print("  Version 2.0.0 | Type 'saga --help' for commands\n")
+            except:
+                # If even simple ASCII fails, skip banner entirely
+                pass
+        
+        # Always mark as shown to prevent repeats
+        os.environ['GITSAGA_BANNER_SHOWN'] = '1'
 
 
 @click.group()
@@ -728,11 +738,30 @@ def setup_ai(ctx):
     """Set up AI features (installs Ollama and downloads model)"""
     show_banner()
     
+    # Show critical warning about small models
+    console.print("\n[bold red]⚠️ CRITICAL WARNING: Small LLM Risk[/bold red]")
+    console.print("[yellow]Small models (under 7B parameters) like TinyLlama will:[/yellow]")
+    console.print("  • Hallucinate and create false information")
+    console.print("  • Corrupt your debugging documentation")
+    console.print("  • Generate incorrect root causes and solutions")
+    console.print("\n[bold]Only use models with 7B+ parameters:[/bold]")
+    console.print("  • Llama 2 7B or larger (recommended)")
+    console.print("  • CodeLlama 7B+")
+    console.print("  • Mistral 7B")
+    console.print("  • Mixtral 8x7B")
+    console.print("\n[red]NEVER use: TinyLlama, Phi, StableLM, or any model under 7B[/red]")
+    console.print("\nSee HALLUCINATION_WARNING.md for details.")
+    
+    if not click.confirm("\nDo you understand the risks and want to proceed?"):
+        console.print("[green]Good choice! GitSaga works perfectly without AI.[/green]")
+        return
+    
     from gitsaga.setup import OllamaAutoInstaller
     
     installer = OllamaAutoInstaller()
     if installer.full_setup():
         console.print("\n[green]✨ AI features are configured and ready![/green]")
+        console.print("[bold yellow]Remember: Only use 7B+ parameter models![/bold yellow]")
         console.print("Try: saga capture --force")
     else:
         console.print("\n[yellow]AI setup incomplete. GitSaga will work with basic features.[/yellow]")

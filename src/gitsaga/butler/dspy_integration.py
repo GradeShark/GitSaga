@@ -1,6 +1,15 @@
 """
 DSPy integration for enforcing saga structure and quality.
-Uses local LLMs (TinyLlama/Ollama) for zero-cost processing.
+
+⚠️ CRITICAL WARNING: Small LLMs like TinyLlama (1.1B parameters) will hallucinate
+and corrupt your sagas with false information. Only use models with 7B+ parameters.
+GitSaga now defaults to use_ai=False for safety.
+
+Recommended models:
+- Llama 2 7B or larger
+- Mistral 7B  
+- Mixtral 8x7B
+- CodeLlama 7B+
 """
 
 from typing import List, Optional, Dict, Any
@@ -128,16 +137,28 @@ class SagaEnhancer:
     Uses local LLMs for zero-cost operation.
     """
     
-    def __init__(self, model: str = "tinyllama", use_local: bool = True):
+    def __init__(self, model: str = "llama2", use_local: bool = True):
         """
         Initialize the SagaEnhancer.
         
+        ⚠️ WARNING: Models under 7B parameters will hallucinate and corrupt sagas.
+        DO NOT USE: tinyllama, phi, or any model under 7B parameters.
+        
         Args:
-            model: Model to use (tinyllama, llama2, mistral, etc)
+            model: Model to use (llama2, mistral, mixtral, codellama - 7B+ ONLY)
             use_local: Use local Ollama instead of API
         """
         if not DSPY_INSTALLED:
             raise ImportError("DSPy is not installed. Install with: pip install dspy-ai")
+        
+        # Validate model size
+        UNSAFE_MODELS = ['tinyllama', 'phi', 'phi2', 'stablelm', 'pythia']
+        if model.lower() in UNSAFE_MODELS:
+            raise ValueError(
+                f"❌ CRITICAL: {model} is unsafe for GitSaga due to hallucination risk.\n"
+                f"Small models corrupt sagas with false information.\n"
+                f"Please use models with 7B+ parameters: llama2, mistral, mixtral, codellama"
+            )
             
         self.model = model
         self.use_local = use_local

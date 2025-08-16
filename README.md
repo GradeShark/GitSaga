@@ -21,9 +21,12 @@ GitSaga is a local-first development context manager that automatically captures
 - **Context Preservation**: Full git context, diffs, and file changes included
 
 ### 🤖 Optional AI Enhancement
-- **Local LLM Support**: Uses Ollama + TinyLlama (100% private, no cloud)
-- **Structured Generation**: DSPy ensures consistent, complete documentation
-- **Graceful Fallback**: Works perfectly without AI, enhanced with it
+
+⚠️ **CRITICAL WARNING**: Small LLMs (under 7B parameters) like TinyLlama can **hallucinate and corrupt your sagas** with false information. GitSaga now defaults to `use_ai=False` for safety. Only enable AI with larger models (7B+ parameters recommended).
+
+- **Local LLM Support**: Ollama with 7B+ parameter models ONLY
+- **Structured Generation**: DSPy ensures consistent formatting
+- **Graceful Fallback**: Works perfectly without AI, enhanced with reliable models only
 
 ### ⚡ Zero-Friction Experience
 - **Git Hook Integration**: Automatic capture on commit
