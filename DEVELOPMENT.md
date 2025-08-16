@@ -134,8 +134,8 @@ if sys.platform == "win32":
 
 ### Install from Source
 ```bash
-git clone https://github.com/yourusername/gitsaga.git
-cd gitsaga
+git clone https://github.com/GradeShark/SagaShark.git
+cd SagaShark
 pip install -e .
 ```
 

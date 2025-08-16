@@ -1,6 +1,6 @@
 # SagaShark v2 - Track the Story Behind Your Code 🦈
 
-[![Version](https://img.shields.io/badge/version-2.0.0-blue)](https://github.com/yourusername/sagashark)
+[![Version](https://img.shields.io/badge/version-2.0.0-blue)](https://github.com/GradeShark/SagaShark)
 [![Python](https://img.shields.io/badge/python-3.8+-green)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-purple)](LICENSE)
 
@@ -39,8 +39,8 @@ SagaShark is a local-first development context manager that automatically captur
 
 ```bash
 # Install from source (PyPI package coming soon)
-git clone https://github.com/yourusername/sagashark.git
-cd sagashark
+git clone https://github.com/GradeShark/SagaShark.git
+cd SagaShark
 pip install -e .
 
 # That's it! SagaShark will offer to set up AI features on first run
