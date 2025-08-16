@@ -102,7 +102,7 @@ class AutoChronicler:
         )
         
         # Save saga
-        saga.save(self.saga_dir)
+        saga.save(self.saga_dir / 'sagas')
         
         # Clear session context after capture
         self._clear_session_context()
