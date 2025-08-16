@@ -46,7 +46,7 @@ class AutoChronicler:
         self.repo_path = repo_path or Path.cwd()
         self.repo = GitRepository(self.repo_path)
         self.scorer = SignificanceScorer()
-        self.saga_dir = self.repo_path / '.gitsaga'
+        self.saga_dir = self.repo_path / '.sagashark'
         self.context_file = self.repo_path / '.saga_context.json'
         
         # Initialize AI enhancer if available and requested

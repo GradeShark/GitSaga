@@ -55,7 +55,7 @@ saga setup-ai
 ```bash
 # One-time setup in your project
 cd your-project
-saga init        # Creates .gitsaga/ directory
+saga init        # Creates .sagashark/ directory
 saga install-hooks  # Enables automatic capture
 
 # That's it! Now SagaShark works automatically:
@@ -96,7 +96,7 @@ A saga is a markdown document that captures the context around a piece of develo
 
 ```
 your-project/
-└── .gitsaga/
+└── .sagashark/
     ├── config.json        # GitSaga configuration
     ├── sagas/            # Your saga documents (git-tracked)
     │   ├── main/         # Sagas from main branch
@@ -306,7 +306,7 @@ Traditional git commits are frozen in time. GitSaga creates **editable markdown 
 - Add debugging notes during investigation
 - Append post-mortem lessons after resolution  
 - Document verification steps that actually worked
-- Your `.gitsaga/sagas/` folder becomes a lab notebook that writes itself, then grows with your insights
+- Your `.sagashark/sagas/` folder becomes a lab notebook that writes itself, then grows with your insights
 
 ### 🚀 10x Faster AI Context Retrieval
 GitSaga transforms git from sequential archive to **parallel-accessible knowledge base**:
@@ -322,8 +322,8 @@ git show def456            # Repeat for each...
 **With GitSaga**: Parallel, instant access
 ```bash
 saga search "authentication"     # ALL auth work ever, instantly
-ls .gitsaga/sagas/2025/08/week-*  # Entire week's context at once
-grep -r "timeout" .gitsaga/sagas  # Every timeout issue, immediately
+ls .sagashark/sagas/2025/08/week-*  # Entire week's context at once
+grep -r "timeout" .sagashark/sagas  # Every timeout issue, immediately
 ```
 
 AI assistants can now consume your **entire debugging history** in one operation instead of dozens of sequential git commands. This is game-changing for AI-assisted development.

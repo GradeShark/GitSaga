@@ -13,7 +13,7 @@ import re
 class SagaOrganizer:
     """
     Organizes saga files into a hierarchical date-based structure:
-    .gitsaga/sagas/
+    .sagashark/sagas/
     ├── 2024/
     │   ├── 01-January/
     │   │   ├── week-01/
@@ -26,7 +26,7 @@ class SagaOrganizer:
     """
     
     def __init__(self, saga_dir: Path = None):
-        self.saga_dir = saga_dir or Path.cwd() / '.gitsaga' / 'sagas'
+        self.saga_dir = saga_dir or Path.cwd() / '.sagashark' / 'sagas'
         self.saga_dir.mkdir(parents=True, exist_ok=True)
         
     def get_saga_date(self, saga_path: Path) -> Optional[datetime]:
@@ -52,7 +52,7 @@ class SagaOrganizer:
     def get_organized_path(self, saga_path: Path, date: datetime = None) -> Path:
         """
         Get the organized path for a saga file.
-        Example: .gitsaga/sagas/2024/03-March/week-02/original-filename.md
+        Example: .sagashark/sagas/2024/03-March/week-02/original-filename.md
         """
         if date is None:
             date = self.get_saga_date(saga_path)

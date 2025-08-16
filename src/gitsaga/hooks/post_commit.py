@@ -62,7 +62,7 @@ def main():
                 print(f"GitSaga: High-value commit detected! Run 'saga enhance HEAD' to add debugging details.")
         
         # Save the saga
-        saga_path = saga.save(Path.cwd() / '.gitsaga' / 'sagas')
+        saga_path = saga.save(Path.cwd() / '.sagashark' / 'sagas')
         print(f"GitSaga: Captured saga '{saga.title}' -> {saga_path.name}")
             
     except Exception as e:

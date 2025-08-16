@@ -22,7 +22,7 @@ class GitSagaMCPServer:
     
     def __init__(self):
         self.server = Server("gitsaga")
-        self.saga_dir = Path.cwd() / '.gitsaga'
+        self.saga_dir = Path.cwd() / '.sagashark'
         self.setup_handlers()
     
     def setup_handlers(self):

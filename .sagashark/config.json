@@ -1,0 +1,13 @@
+{
+  "version": "0.1.0",
+  "auto_capture": false,
+  "min_significance": 0.5,
+  "excluded_paths": [
+    "node_modules",
+    "venv",
+    "__pycache__",
+    ".git"
+  ],
+  "default_type": "general",
+  "max_search_results": 10
+}

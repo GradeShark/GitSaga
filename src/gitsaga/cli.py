@@ -25,20 +25,20 @@ from .capture.significance import SignificanceScorer, CommitContext
 # Create console with proper encoding for Windows
 console = Console(force_terminal=True, legacy_windows=False)
 
-# ASCII art banner - ANSI Shadow style (same as Claude Code uses)
+# ASCII art banner - ANSI Shadow style
 BANNER = """
- ██████╗ ██╗████████╗███████╗ █████╗  ██████╗  █████╗ 
-██╔════╝ ██║╚══██╔══╝██╔════╝██╔══██╗██╔════╝ ██╔══██╗
-██║  ███╗██║   ██║   ███████╗███████║██║  ███╗███████║
-██║   ██║██║   ██║   ╚════██║██╔══██║██║   ██║██╔══██║
-╚██████╔╝██║   ██║   ███████║██║  ██║╚██████╔╝██║  ██║
- ╚═════╝ ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝
+███████╗ █████╗  ██████╗  █████╗ ███████╗██╗  ██╗ █████╗ ██████╗ ██╗  ██╗
+██╔════╝██╔══██╗██╔════╝ ██╔══██╗██╔════╝██║  ██║██╔══██╗██╔══██╗██║ ██╔╝
+███████╗███████║██║  ███╗███████║███████╗███████║███████║██████╔╝█████╔╝ 
+╚════██║██╔══██║██║   ██║██╔══██║╚════██║██╔══██║██╔══██║██╔══██╗██╔═██╗ 
+███████║██║  ██║╚██████╔╝██║  ██║███████║██║  ██║██║  ██║██║  ██║██║  ██╗
+╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
 """
 
 def show_banner():
     """Show banner on first run in session"""
     # Use environment variable to track if banner was shown
-    if not os.environ.get('GITSAGA_BANNER_SHOWN'):
+    if not os.environ.get('SAGASHARK_BANNER_SHOWN'):
         try:
             # Set encoding for Windows
             if sys.platform == 'win32':
@@ -62,17 +62,17 @@ def show_banner():
                 pass
         
         # Always mark as shown to prevent repeats
-        os.environ['GITSAGA_BANNER_SHOWN'] = '1'
+        os.environ['SAGASHARK_BANNER_SHOWN'] = '1'
 
 
 @click.group()
 @click.pass_context
 def cli(ctx):
-    """GitSaga - Track the story behind your code"""
+    """SagaShark - Track the story behind your code"""
     ctx.ensure_object(dict)
     
     # Check if we're in a GitSaga repository
-    saga_dir = Path.cwd() / '.gitsaga'
+    saga_dir = Path.cwd() / '.sagashark'
     ctx.obj['saga_dir'] = saga_dir
     ctx.obj['is_initialized'] = saga_dir.exists()
     
@@ -98,8 +98,8 @@ def init(ctx):
     config = Config.init_repository(Path.cwd())
     
     console.print("[green][OK] GitSaga repository initialized![/green]")
-    console.print(f"• Created .gitsaga/ directory")
-    console.print(f"• Configuration saved to .gitsaga/config.json")
+    console.print(f"• Created .sagashark/ directory")
+    console.print(f"• Configuration saved to .sagashark/config.json")
     
     # Check if we're in a git repository
     git_dir = Path.cwd() / '.git'
@@ -805,7 +805,7 @@ def enhance(ctx, commit):
     enhanced_saga = capturer.capture_high_value_info(context.message, saga)
     
     # Save the enhanced saga
-    saga_path = enhanced_saga.save(Path.cwd() / '.gitsaga' / 'sagas')
+    saga_path = enhanced_saga.save(Path.cwd() / '.sagashark' / 'sagas')
     console.print(f"[green]✓ Enhanced saga saved: {saga_path.name}[/green]")
 
 

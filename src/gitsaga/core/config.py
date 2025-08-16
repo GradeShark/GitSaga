@@ -21,7 +21,7 @@ class Config:
     
     def __init__(self, config_path: Optional[Path] = None):
         """Initialize config from file or defaults"""
-        self.config_path = config_path or Path.cwd() / '.gitsaga' / 'config.json'
+        self.config_path = config_path or Path.cwd() / '.sagashark' / 'config.json'
         self.config = self._load_config()
     
     def _load_config(self) -> Dict[str, Any]:
@@ -60,7 +60,7 @@ class Config:
     @classmethod
     def init_repository(cls, path: Path) -> 'Config':
         """Initialize a new GitSaga repository"""
-        gitsaga_dir = path / '.gitsaga'
+        gitsaga_dir = path / '.sagashark'
         gitsaga_dir.mkdir(exist_ok=True)
         
         # Create directory structure

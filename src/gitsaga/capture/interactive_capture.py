@@ -22,7 +22,7 @@ class InteractiveCapturer:
     """
     
     def __init__(self, saga_dir: Path = None):
-        self.saga_dir = saga_dir or Path.cwd() / '.gitsaga'
+        self.saga_dir = saga_dir or Path.cwd() / '.sagashark'
         self.context_file = self.saga_dir / '.last_capture_context.json'
     
     def should_capture_interactively(self, score: float, commit_msg: str) -> bool:
