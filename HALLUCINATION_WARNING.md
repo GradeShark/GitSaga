@@ -2,13 +2,13 @@
 
 ## Summary
 
-Small language models (under 7B parameters) like TinyLlama **will corrupt your GitSaga documentation** with hallucinated information. This is not a theoretical risk - it has been observed in production.
+Small language models (under 7B parameters) like TinyLlama **will corrupt your SagaShark documentation** with hallucinated information. This is not a theoretical risk - it has been observed in production.
 
 ## Observed Hallucinations
 
 During testing, TinyLlama (1.1B parameters) demonstrated severe hallucination issues:
 
-1. **Misspelled Project Names**: TinyLlama changed "GitSaga" to "GitSaaga" throughout documentation
+1. **Misspelled Project Names**: TinyLlama changed "SagaShark" to "SagaShaark" throughout documentation
 2. **Invented Features**: Made up features like "automated branching, parallel builds, dependency tracking" that don't exist
 3. **False Root Causes**: Created completely fictional explanations for bugs
 4. **Incorrect Solutions**: Generated code that doesn't solve the actual problem
@@ -16,7 +16,7 @@ During testing, TinyLlama (1.1B parameters) demonstrated severe hallucination is
 
 ## Why This Matters
 
-GitSaga captures debugging sessions to create a searchable knowledge base. If this knowledge base contains false information:
+SagaShark captures debugging sessions to create a searchable knowledge base. If this knowledge base contains false information:
 
 - ❌ You'll implement wrong solutions based on fake root causes
 - ❌ Team members will waste time on non-existent issues  
@@ -44,7 +44,7 @@ GitSaga captures debugging sessions to create a searchable knowledge base. If th
 - ❌ **Pythia** (<7B versions) - Not suitable for production
 - ❌ **Any model under 7B parameters**
 
-## Protection Measures in GitSaga v2
+## Protection Measures in SagaShark v2
 
 1. **Default Safety**: `use_ai=False` by default in AutoChronicler
 2. **Model Validation**: Rejects known unsafe models
@@ -55,7 +55,7 @@ GitSaga captures debugging sessions to create a searchable knowledge base. If th
 
 ### Option 1: Disable AI (Recommended for Most Users)
 ```bash
-# GitSaga works perfectly without AI
+# SagaShark works perfectly without AI
 saga init  # Don't run setup-ai
 ```
 
@@ -82,7 +82,7 @@ If using AI enhancement:
 
 ## What If I Already Used TinyLlama?
 
-If you've been using TinyLlama with GitSaga:
+If you've been using TinyLlama with SagaShark:
 
 1. **Stop immediately** - Disable AI or switch to a 7B+ model
 2. **Audit existing sagas** - Review all AI-generated content
@@ -94,7 +94,7 @@ If you've been using TinyLlama with GitSaga:
 **Small models are not just "less accurate" - they actively create false information that will corrupt your debugging knowledge base.**
 
 Either:
-- Use GitSaga without AI (recommended)
+- Use SagaShark without AI (recommended)
 - Use a 7B+ parameter model (verified safe)
 - Never use models under 7B parameters
 
@@ -117,7 +117,7 @@ Your future self debugging at 3 AM will thank you for keeping your sagas accurat
 parallel build conflicts in the dependency tracker..."
 
 # Reality:
-- GitSaga (not GitSaaga)  
+- SagaShark (not SagaShaark)  
 - Has no automated branching system
 - Has no parallel builds
 - Has no dependency tracker

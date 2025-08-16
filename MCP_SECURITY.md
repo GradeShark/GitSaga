@@ -1,7 +1,7 @@
-# MCP Server Security Guidelines for GitSaga
+# MCP Server Security Guidelines for SagaShark
 
 ## Overview
-The Model Context Protocol (MCP) server for GitSaga operates locally and communicates via stdio, making it inherently more secure than network-based services. However, proper security measures are still essential.
+The Model Context Protocol (MCP) server for SagaShark operates locally and communicates via stdio, making it inherently more secure than network-based services. However, proper security measures are still essential.
 
 ## Security Architecture
 
@@ -30,7 +30,7 @@ class SecureSagaServer:
 ```
 
 #### Restricted Operations
-- ✅ Read sagas from `.gitsaga/sagas/`
+- ✅ Read sagas from `.sagashark/sagas/`
 - ✅ Write new sagas to designated directories
 - ✅ Search within project boundaries
 - ❌ Access system files
@@ -154,9 +154,9 @@ from pathlib import Path
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
 
-class SecureGitSagaServer:
+class SecureSagaSharkServer:
     def __init__(self):
-        self.base_dir = Path.cwd() / '.gitsaga'
+        self.base_dir = Path.cwd() / '.sagashark'
         self.rate_limiter = RateLimiter()
         
     async def search_sagas(self, query: str) -> list:
@@ -204,7 +204,7 @@ class SecureGitSagaServer:
 
 ## Conclusion
 
-The MCP server for GitSaga has a minimal attack surface due to:
+The MCP server for SagaShark has a minimal attack surface due to:
 1. Local-only stdio communication
 2. No network exposure
 3. Process-level isolation

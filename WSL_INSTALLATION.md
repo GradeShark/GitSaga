@@ -1,9 +1,9 @@
-# GitSaga WSL Installation Guide
+# SagaShark WSL Installation Guide
 
-This guide explains how to install and use GitSaga in Windows Subsystem for Linux (WSL) when GitSaga is already installed on Windows.
+This guide explains how to install and use SagaShark in Windows Subsystem for Linux (WSL) when SagaShark is already installed on Windows.
 
 ## Prerequisites
-- GitSaga installed on Windows (in `C:\Users\[username]\OneDrive\Documents\gitsaga`)
+- SagaShark installed on Windows (in `C:\Users\[username]\OneDrive\Documents\gitsaga`)
 - WSL with Python 3 installed
 - Access to Windows filesystem from WSL (via `/mnt/c/`)
 
@@ -21,13 +21,13 @@ Add the following content:
 
 ```bash
 #!/bin/bash
-# GitSaga WSL Wrapper Script
-# Runs Windows GitSaga from WSL environment
+# SagaShark WSL Wrapper Script
+# Runs Windows SagaShark from WSL environment
 
-# Set Python path to find GitSaga modules
+# Set Python path to find SagaShark modules
 export PYTHONPATH=/mnt/c/Users/h444n/OneDrive/Documents/gitsaga/src:$PYTHONPATH
 
-# Run GitSaga as a Python module (handles relative imports correctly)
+# Run SagaShark as a Python module (handles relative imports correctly)
 python3 -m gitsaga.cli "$@"
 ```
 
@@ -54,7 +54,7 @@ source ~/.bashrc
 # Navigate to your project
 cd /home/[username]/your-project
 
-# Initialize GitSaga
+# Initialize SagaShark
 saga init
 
 # Install git hooks for automatic capture
@@ -66,7 +66,7 @@ saga install-hooks
 ### Issue: "attempted relative import with no known parent package"
 **Solution**: Make sure the wrapper uses `python3 -m gitsaga.cli` instead of calling `cli.py` directly.
 
-### Issue: GitSaga detects wrong directory (.gitsaga in source folder)
+### Issue: SagaShark detects wrong directory (.sagashark in source folder)
 **Solution**: Remove any `cd` commands from the wrapper script. The wrapper should operate in your current directory.
 
 ### Issue: Import errors
@@ -83,7 +83,7 @@ chmod +x ~/saga.sh
 
 ## Usage Example
 
-Once installed, GitSaga works exactly like the Windows version:
+Once installed, SagaShark works exactly like the Windows version:
 
 ```bash
 # Create a saga
@@ -104,10 +104,10 @@ saga log --since=7d
 
 ## Auto-Organization Feature
 
-GitSaga v2 includes automatic organization of sagas into a date-based hierarchy:
+SagaShark v2 includes automatic organization of sagas into a date-based hierarchy:
 
 ```
-.gitsaga/sagas/
+.sagashark/sagas/
 ├── 2024/
 │   ├── 01-January/
 │   │   ├── week-01/
@@ -127,9 +127,9 @@ saga organize --dry-run
 saga organize --cleanup
 ```
 
-## Updating GitSaga
+## Updating SagaShark
 
-When GitSaga is updated on Windows, the changes are immediately available in WSL:
+When SagaShark is updated on Windows, the changes are immediately available in WSL:
 
 ```bash
 # On Windows (or from WSL)
@@ -141,8 +141,8 @@ git pull origin main
 
 ## Benefits of This Setup
 
-1. **Single Installation**: Maintain one GitSaga installation used by both Windows and WSL
-2. **Immediate Updates**: Changes to GitSaga code are instantly available in both environments
+1. **Single Installation**: Maintain one SagaShark installation used by both Windows and WSL
+2. **Immediate Updates**: Changes to SagaShark code are instantly available in both environments
 3. **Shared Sagas**: Both environments can access the same saga database
 4. **No Sudo Required**: Works entirely in user space
 5. **Cross-Platform Development**: Perfect for projects that span Windows and WSL
