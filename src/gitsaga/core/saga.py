@@ -102,9 +102,11 @@ class Saga:
         """Save saga to markdown file with automatic date-based organization"""
         directory.mkdir(parents=True, exist_ok=True)
         
-        # Generate filename: YYYY-MM-DD-HHMM-title-slug.md
+        # Generate concise filename: YYYY-MM-DD-HHMM-key-words.md
         timestamp_str = self.timestamp.strftime("%Y-%m-%d-%H%M")
-        title_slug = self._slugify(self.title)[:50]  # Limit length
+        
+        # Extract key words from title for concise filename
+        title_slug = self._create_concise_slug(self.title)
         filename = f"{timestamp_str}-{title_slug}.md"
         
         # Use auto-organization if enabled
@@ -129,6 +131,45 @@ class Saga:
         slug = re.sub(r'[^\w\s-]', '', text.lower())
         slug = re.sub(r'[-\s]+', '-', slug)
         return slug.strip('-')
+    
+    def _create_concise_slug(self, title: str, max_length: int = 30) -> str:
+        """Create a concise slug that captures the essence of the title"""
+        import re
+        
+        # Common words to skip for more concise filenames
+        skip_words = {'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 
+                     'for', 'of', 'with', 'by', 'from', 'up', 'about', 'into', 
+                     'through', 'during', 'how', 'when', 'where', 'why', 'what',
+                     'is', 'are', 'was', 'were', 'been', 'be', 'have', 'has', 'had',
+                     'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may',
+                     'might', 'must', 'can', 'this', 'that', 'these', 'those'}
+        
+        # Extract words and filter
+        words = re.findall(r'\b\w+\b', title.lower())
+        
+        # Keep important words (not in skip list)
+        important_words = [w for w in words if w not in skip_words and len(w) > 2]
+        
+        # If we filtered out too much, keep first few original words
+        if len(important_words) < 2:
+            important_words = words[:3]
+        
+        # Take first 3-4 important words
+        key_words = important_words[:4]
+        
+        # Create slug
+        slug = '-'.join(key_words)
+        
+        # Ensure it's not too long
+        if len(slug) > max_length:
+            # Truncate smartly at word boundary
+            slug = slug[:max_length].rsplit('-', 1)[0]
+        
+        # Fallback if empty
+        if not slug:
+            slug = self._slugify(title)[:max_length]
+        
+        return slug
     
     def matches(self, query: str) -> bool:
         """Simple text matching for search"""
