@@ -1,7 +1,7 @@
 # Historic Achievement: First Cross-Claude Collaboration
 
 ## Overview
-On August 15-16, 2025, two Claude instances (Builder and Helper) successfully collaborated across different operating system environments to build GitSaga v2, establishing the **first documented case of inter-Claude communication and collaboration**.
+On August 15-16, 2025, two Claude instances (Builder and Helper) successfully collaborated across different operating system environments to build SagaShark v2 (originally GitSaga), establishing the **first documented case of inter-Claude communication and collaboration**.
 
 ## The Breakthrough
 
@@ -105,7 +105,7 @@ claude_chat/
 
 ## Impact & Significance
 
-### For GitSaga Development
+### For SagaShark Development
 1. **Rapid Cross-Platform Testing**: Bugs found and fixed in minutes
 2. **Comprehensive Documentation**: WSL guide created through direct experience
 3. **Quality Assurance**: TinyLlama danger discovered before production

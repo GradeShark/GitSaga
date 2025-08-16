@@ -1,10 +1,10 @@
-# GitSaga v2 - Track the Story Behind Your Code
+# SagaShark v2 - Track the Story Behind Your Code 🦈
 
-[![Version](https://img.shields.io/badge/version-2.0.0-blue)](https://github.com/yourusername/gitsaga)
+[![Version](https://img.shields.io/badge/version-2.0.0-blue)](https://github.com/yourusername/sagashark)
 [![Python](https://img.shields.io/badge/python-3.8+-green)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-purple)](LICENSE)
 
-GitSaga is a local-first development context manager that automatically captures and retrieves debugging solutions from your git history. It creates a searchable knowledge base of your debugging sessions, making that "I fixed this before" moment actually useful.
+SagaShark is a local-first development context manager that automatically captures and retrieves debugging solutions from your git history. It creates a searchable knowledge base of your debugging sessions, making that "I fixed this before" moment actually useful.
 
 **v2 Highlights**: Automatic capture with intelligent scoring, interactive debugging prompts, weighted quality system prioritizing reproducible solutions.
 
@@ -39,11 +39,11 @@ GitSaga is a local-first development context manager that automatically captures
 
 ```bash
 # Install from source (PyPI package coming soon)
-git clone https://github.com/yourusername/gitsaga.git
-cd gitsaga
+git clone https://github.com/yourusername/sagashark.git
+cd sagashark
 pip install -e .
 
-# That's it! GitSaga will offer to set up AI features on first run
+# That's it! SagaShark will offer to set up AI features on first run
 # Or manually set up AI anytime with:
 saga setup-ai
 ```
@@ -58,9 +58,9 @@ cd your-project
 saga init        # Creates .gitsaga/ directory
 saga install-hooks  # Enables automatic capture
 
-# That's it! Now GitSaga works automatically:
+# That's it! Now SagaShark works automatically:
 git commit -m "fix: Resolved database connection timeout"
-# GitSaga detects this is significant (score: 0.70) and prompts:
+# SagaShark detects this is significant (score: 0.70) and prompts:
 #   > What was the ROOT CAUSE?
 #   > WHY does this fix work?
 #   > Key lesson for next time?
@@ -141,11 +141,11 @@ Show repository statistics and recent activity.
 
 ## V2 Features (Automatic Capture)
 
-**Note**: GitSaga automatically offers to set up AI on first run. The setup is completely optional - GitSaga works great without it, but AI features provide richer, more structured sagas.
+**Note**: SagaShark automatically offers to set up AI on first run. The setup is completely optional - SagaShark works great without it, but AI features provide richer, more structured sagas.
 
 ### Interactive Capture for High-Value Debugging
 
-When GitSaga detects a significant debugging commit (e.g., "fix", "resolved", "finally"), it **automatically prompts** for the critical information that makes documentation truly valuable:
+When SagaShark detects a significant debugging commit (e.g., "fix", "resolved", "finally"), it **automatically prompts** for the critical information that makes documentation truly valuable:
 
 1. **Root Cause** (25% weight) - The actual underlying problem, not just symptoms
 2. **Why the Fix Works** (30% weight) - The reasoning behind the solution for reproducibility
@@ -335,4 +335,4 @@ GitSaga's killer feature isn't AI enhancement - it's **structural optimization**
 3. Template-based approach ensures accuracy without AI risks
 4. Year/month/week organization makes context retrieval trivial
 
-**GitSaga: Git history optimized for both human editing and AI consumption.**
+**SagaShark: Git history optimized for both human editing and AI consumption.**
