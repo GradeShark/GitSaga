@@ -1,5 +1,5 @@
 """
-GitSaga - Development Context Manager
+SagaShark - Development Context Manager
 Track the story behind your code
 """
 
@@ -13,13 +13,13 @@ if readme_path.exists():
     long_description = readme_path.read_text(encoding="utf-8")
 
 setup(
-    name="gitsaga",
+    name="sagashark",
     version="2.0.0",
     author="GradeShark",
     description="Track the story behind your code - AI-powered development context manager",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/GradeShark/gitsaga",
+    url="https://github.com/GradeShark/SagaShark",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     classifiers=[
@@ -49,12 +49,12 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "saga=gitsaga.cli_wrapper:main",
-            "gitsaga=gitsaga.cli_wrapper:main",
+            "saga=sagashark.cli_wrapper:main",
+            "sagashark=sagashark.cli_wrapper:main",
         ],
     },
     project_urls={
-        "Bug Reports": "https://github.com/GradeShark/gitsaga/issues",
-        "Source": "https://github.com/GradeShark/gitsaga",
+        "Bug Reports": "https://github.com/GradeShark/SagaShark/issues",
+        "Source": "https://github.com/GradeShark/SagaShark",
     },
 )

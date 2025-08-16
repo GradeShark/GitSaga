@@ -28,7 +28,7 @@ Add the following content:
 export PYTHONPATH=/mnt/c/Users/h444n/OneDrive/Documents/gitsaga/src:$PYTHONPATH
 
 # Run SagaShark as a Python module (handles relative imports correctly)
-python3 -m gitsaga.cli "$@"
+python3 -m sagashark.cli "$@"
 ```
 
 **Important**: Do NOT include a `cd` command in the wrapper - it should use your current directory.
@@ -64,7 +64,7 @@ saga install-hooks
 ## Common Issues and Solutions
 
 ### Issue: "attempted relative import with no known parent package"
-**Solution**: Make sure the wrapper uses `python3 -m gitsaga.cli` instead of calling `cli.py` directly.
+**Solution**: Make sure the wrapper uses `python3 -m sagashark.cli` instead of calling `cli.py` directly.
 
 ### Issue: SagaShark detects wrong directory (.sagashark in source folder)
 **Solution**: Remove any `cd` commands from the wrapper script. The wrapper should operate in your current directory.
