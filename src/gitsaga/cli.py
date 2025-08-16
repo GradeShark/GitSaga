@@ -822,7 +822,7 @@ def organize(ctx, dry_run, cleanup):
     
     from .core.organizer import SagaOrganizer
     
-    organizer = SagaOrganizer(ctx.obj['saga_dir'])
+    organizer = SagaOrganizer(ctx.obj['saga_dir'] / 'sagas')
     
     # Get current statistics
     stats = organizer.get_statistics()

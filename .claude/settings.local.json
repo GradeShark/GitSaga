@@ -12,7 +12,9 @@
       "Bash(git commit:*)",
       "Bash(git add:*)",
       "Bash(saga:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(cmd /c:*)",
+      "Bash(mv:*)"
     ],
     "deny": [],
     "ask": [],
