@@ -15,6 +15,7 @@ from typing import List, Dict, Any, Optional
 from ..core.saga import Saga
 from ..core.repository import GitRepository
 from .significance import SignificanceScorer, CommitContext
+from .patterns_config import PatternsConfig
 
 try:
     from ..butler.dspy_integration import SagaEnhancer
@@ -48,6 +49,7 @@ class AutoChronicler:
         self.scorer = SignificanceScorer()
         self.saga_dir = self.repo_path / '.sagashark'
         self.context_file = self.repo_path / '.saga_context.json'
+        self.patterns = PatternsConfig(self.saga_dir / 'patterns.json')
         
         # Initialize AI enhancer if available and requested
         self.enhancer = None
@@ -268,17 +270,29 @@ class AutoChronicler:
         # The Problem/Issue
         content.append("## 📋 The Problem")
         
+        # Extract errors and problems from commit message and diff
+        errors = self._extract_errors(context)
+        
         # Extract problem from commit message
         if 'fix' in context.message.lower() or 'bug' in context.message.lower():
             content.append("### Symptoms")
-            # Try to extract error messages or symptoms
-            error_patterns = re.findall(r'(error|exception|crash|fail)[^\n]*', 
-                                      context.message, re.IGNORECASE)
-            if error_patterns:
-                for error in error_patterns:
+            if errors['from_message']:
+                for error in errors['from_message']:
+                    content.append(f"- {error}")
+            elif errors['from_diff']:
+                for error in errors['from_diff'][:3]:  # Limit to 3 from diff
                     content.append(f"- {error}")
             else:
                 content.append(f"- {context.message.split('\n')[0]}")
+            
+            # Add stack traces if found
+            if errors['stack_traces']:
+                content.append("")
+                content.append("### Error Details")
+                content.append("```")
+                for trace in errors['stack_traces'][:1]:  # Show first stack trace
+                    content.append(trace)
+                content.append("```")
         else:
             content.append(context.message)
         content.append("")
@@ -286,6 +300,19 @@ class AutoChronicler:
         # Investigation/Implementation
         if score_result['suggested_type'] == 'debugging':
             content.append("## 🔍 Investigation")
+            
+            # Add investigation context from diff
+            investigation_contexts = self._extract_investigation_context(context.diff_content)
+            if investigation_contexts:
+                content.append("### Investigation Steps Found in Code")
+                for inv_context in investigation_contexts:
+                    content.append(f"- **{inv_context['description']}**")
+                    if inv_context.get('code'):
+                        content.append("  ```")
+                        for line in inv_context['code'].split('\n')[:3]:  # Show first 3 lines
+                            content.append(f"  {line}")
+                        content.append("  ```")
+                content.append("")
         else:
             content.append("## 💡 Implementation")
             
@@ -348,7 +375,12 @@ class AutoChronicler:
         # Verification steps
         if score_result['suggested_type'] in ['debugging', 'feature']:
             content.append("## 🧪 Verification")
-            content.append("- [Add verification steps]")
+            verification_steps = self._generate_verification_steps(context.files_changed)
+            if verification_steps:
+                for step in verification_steps:
+                    content.append(f"- {step}")
+            else:
+                content.append("- [Add verification steps]")
             content.append("")
             
         return '\n'.join(content)
@@ -614,6 +646,180 @@ class AutoChronicler:
         }
         
         return type_map.get(ext, 'File')
+    
+    def _extract_errors(self, context: CommitContext) -> Dict[str, List[str]]:
+        """Extract error messages from commit message and diff content."""
+        errors = {
+            'from_message': [],
+            'from_diff': [],
+            'stack_traces': []
+        }
+        
+        # Get error patterns from config
+        error_patterns = self.patterns.get_error_patterns()
+        
+        # Extract from commit message
+        for pattern in error_patterns:
+            matches = re.findall(pattern, context.message, re.IGNORECASE | re.MULTILINE)
+            for match in matches:
+                error_msg = match.strip() if isinstance(match, str) else match[0].strip()
+                if error_msg and len(error_msg) > 5:  # Filter out too short matches
+                    errors['from_message'].append(error_msg)
+        
+        # Extract from diff content
+        if context.diff_content:
+            for pattern in error_patterns:
+                matches = re.findall(pattern, context.diff_content, re.IGNORECASE | re.MULTILINE)
+                for match in matches:
+                    error_msg = match.strip() if isinstance(match, str) else match[0].strip()
+                    if error_msg and len(error_msg) > 5 and error_msg not in errors['from_message']:
+                        errors['from_diff'].append(error_msg)
+            
+            # Look for stack traces
+            stack_pattern = r'(?:Traceback \(most recent call last\):|at .+\(.+:\d+\))[\s\S]{50,500}'
+            stack_matches = re.findall(stack_pattern, context.diff_content)
+            errors['stack_traces'] = stack_matches[:2]  # Limit to 2 stack traces
+        
+        # Deduplicate while preserving order
+        errors['from_message'] = list(dict.fromkeys(errors['from_message']))[:5]
+        errors['from_diff'] = list(dict.fromkeys(errors['from_diff']))[:5]
+        
+        return errors
+    
+    def _generate_verification_steps(self, files_changed: List[str]) -> List[str]:
+        """Generate verification steps based on file types."""
+        steps = []
+        seen_types = set()
+        
+        # Get verification mappings from config
+        verification_map = self.patterns.get_verification_steps()
+        
+        # Detect framework and get framework-specific patterns
+        framework = self.patterns.detect_framework(files_changed)
+        framework_patterns = self.patterns.get_framework_patterns(framework)
+        
+        for file_path in files_changed:
+            file_lower = file_path.lower()
+            path_obj = Path(file_path)
+            ext = path_obj.suffix.lower()
+            
+            # Check for framework-specific patterns
+            for pattern, step in framework_patterns.items():
+                if pattern in file_path and pattern not in seen_types:
+                    steps.append(step)
+                    seen_types.add(pattern)
+                    break
+            
+            # Check file extensions
+            if ext in verification_map and ext not in seen_types:
+                steps.append(verification_map[ext])
+                seen_types.add(ext)
+            
+            # Check for special file names
+            if 'migration' in file_lower and 'migration' not in seen_types:
+                steps.append(verification_map['migration'])
+                seen_types.add('migration')
+            elif 'schema' in file_lower and 'schema' not in seen_types:
+                steps.append(verification_map['schema'])
+                seen_types.add('schema')
+            elif 'dockerfile' in file_lower and 'dockerfile' not in seen_types:
+                steps.append(verification_map['dockerfile'])
+                seen_types.add('dockerfile')
+            elif 'readme' in file_lower and 'readme' not in seen_types:
+                steps.append(verification_map['readme'])
+                seen_types.add('readme')
+            
+            # Limit to reasonable number of steps
+            if len(steps) >= 5:
+                break
+        
+        # Add general verification step if we have tests
+        if any('test' in f.lower() or 'spec' in f.lower() for f in files_changed):
+            steps.insert(0, 'Run all tests to ensure nothing is broken')
+        
+        return steps
+    
+    def _extract_investigation_context(self, diff_content: str, max_contexts: int = 3) -> List[Dict[str, str]]:
+        """Extract investigation context from git diff.
+        
+        Looks for:
+        - Added debug statements (console.log, print, dd, var_dump, etc.)
+        - Removed error handling
+        - Modified conditionals
+        - Changed function signatures
+        """
+        contexts = []
+        
+        if not diff_content:
+            return contexts
+        
+        # Split diff into hunks
+        hunk_pattern = r'@@[^@]+@@.*?(?=@@|$)'
+        hunks = re.findall(hunk_pattern, diff_content, re.DOTALL)
+        
+        # Get patterns from config
+        debug_patterns = self.patterns.get_debug_patterns()
+        investigation_patterns = self.patterns.get_investigation_patterns()
+        
+        for hunk in hunks[:max_contexts * 2]:  # Process more hunks than we need
+            context = {}
+            
+            # Look for debug statements
+            for pattern, description in debug_patterns:
+                if re.search(pattern, hunk):
+                    context['type'] = 'debugging'
+                    context['description'] = description
+                    context['code'] = self._extract_relevant_lines(hunk, pattern)
+                    break
+            
+            # Look for other investigation patterns
+            if not context:
+                for pattern_type, pattern in investigation_patterns.items():
+                    if re.search(pattern, hunk):
+                        context['type'] = pattern_type
+                        if pattern_type == 'conditionals':
+                            context['description'] = 'Modified conditional logic'
+                        elif pattern_type == 'error_handling':
+                            context['description'] = 'Changed error handling'
+                        elif pattern_type == 'function_changes':
+                            context['description'] = 'Modified function signature'
+                        elif pattern_type == 'todo_comments':
+                            context['description'] = 'Added TODO/FIXME comment'
+                        elif pattern_type == 'assertions':
+                            context['description'] = 'Modified test assertions'
+                        else:
+                            context['description'] = f'Modified {pattern_type}'
+                        context['code'] = self._extract_relevant_lines(hunk, pattern)
+                        break
+            
+            if context:
+                contexts.append(context)
+                if len(contexts) >= max_contexts:
+                    break
+        
+        return contexts
+    
+    def _extract_relevant_lines(self, hunk: str, pattern: str, context_lines: int = 2) -> str:
+        """Extract relevant lines around a pattern match."""
+        lines = hunk.split('\n')
+        relevant_lines = []
+        
+        for i, line in enumerate(lines):
+            if re.search(pattern, line):
+                # Get surrounding context
+                start = max(0, i - context_lines)
+                end = min(len(lines), i + context_lines + 1)
+                relevant_lines.extend(lines[start:end])
+        
+        # Remove duplicate lines and clean up
+        seen = set()
+        unique_lines = []
+        for line in relevant_lines:
+            if line not in seen and line.strip():
+                seen.add(line)
+                unique_lines.append(line)
+        
+        return '\n'.join(unique_lines[:10])  # Limit to 10 lines
         
     def monitor_commits(self, since: str = 'HEAD~10'):
         """

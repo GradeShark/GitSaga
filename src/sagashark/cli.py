@@ -780,6 +780,38 @@ def enhance(ctx, commit):
     console.print(f"[green]✓ Enhanced saga saved: {saga_path.name}[/green]")
 
 
+@cli.command('config')
+@click.option('--init', is_flag=True, help='Create example patterns configuration file')
+@click.pass_context
+def config(ctx, init):
+    """Configure SagaShark patterns and settings."""
+    show_banner()
+    if not ctx.obj['is_initialized']:
+        console.print("[red]X SagaShark not initialized. Run 'saga init' first.[/red]")
+        sys.exit(1)
+    
+    if init:
+        from sagashark.capture.patterns_config import PatternsConfig
+        
+        saga_dir = ctx.obj['saga_dir']
+        patterns = PatternsConfig(saga_dir / 'patterns.json')
+        config_path = patterns.save_example_config()
+        
+        console.print(Panel.fit(
+            "[green]✨ Created example configuration file![/green]\n\n"
+            f"📁 Location: {config_path}\n\n"
+            "Customize this file to add:\n"
+            "  • Custom error patterns for your project\n"
+            "  • Project-specific verification steps\n"
+            "  • Framework-specific patterns\n\n"
+            "Rename to 'patterns.json' to activate your custom patterns",
+            title="Configuration Created",
+            border_style="green"
+        ))
+    else:
+        console.print("Use --init to create an example patterns configuration file")
+
+
 @cli.command()
 @click.option('--dry-run', is_flag=True, help='Preview changes without moving files')
 @click.option('--cleanup', is_flag=True, help='Remove empty directories after organizing')
