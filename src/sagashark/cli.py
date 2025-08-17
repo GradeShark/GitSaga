@@ -945,7 +945,7 @@ def capture(ctx, commit, auto, force):
                         console.print("[yellow]Skipped interactive capture[/yellow]")
         
         # Save the saga
-        saga_path = saga.save(ctx.obj['saga_dir'])
+        saga_path = saga.save(ctx.obj['saga_dir'] / 'sagas')
         
         if auto:
             # Minimal output for git hook
