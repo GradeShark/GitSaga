@@ -77,7 +77,7 @@ class SignificanceScorer:
     ]
     
     def __init__(self):
-        self.min_threshold = 0.5  # Minimum score to be saga-worthy
+        self.min_threshold = 0.3  # Minimum score to be saga-worthy
         
     def calculate_score(self, context: CommitContext) -> Dict[str, Any]:
         """
@@ -190,7 +190,7 @@ class SignificanceScorer:
             if commit_type in high_value_types:
                 return 0.4  # High significance
             elif commit_type in medium_value_types:
-                return 0.3  # Medium significance (enough to trigger capture)
+                return 0.35  # Medium significance (enough to trigger capture)
         
         return 0.0
     
