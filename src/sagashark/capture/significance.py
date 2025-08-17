@@ -44,6 +44,12 @@ class SignificanceScorer:
         'migration', 'refactor', 'architecture', 'breaking'
     ]
     
+    # Conventional commit types (worth capturing)
+    CONVENTIONAL_COMMIT_TYPES = [
+        'feat', 'feature', 'fix', 'docs', 'style', 'refactor', 
+        'test', 'chore', 'perf', 'build', 'ci'
+    ]
+    
     # Keywords that indicate struggle/investigation
     STRUGGLE_KEYWORDS = [
         'debug', 'investigation', 'hours', 'attempt', 'trying',
@@ -87,25 +93,31 @@ class SignificanceScorer:
             score += breakthrough_score
             factors.append(f"Breakthrough moment (+{breakthrough_score:.2f})")
         
-        # 2. Check for major work indicators
+        # 2. Check for conventional commit types
+        conventional_score = self._score_conventional_commits(context.message)
+        if conventional_score > 0:
+            score += conventional_score
+            factors.append(f"Conventional commit (+{conventional_score:.2f})")
+        
+        # 3. Check for major work indicators
         major_score = self._score_major_work(context.message)
         if major_score > 0:
             score += major_score
             factors.append(f"Major work (+{major_score:.2f})")
         
-        # 3. Check for debugging/investigation
+        # 4. Check for debugging/investigation
         struggle_score = self._score_struggle(context.message)
         if struggle_score > 0:
             score += struggle_score
             factors.append(f"Investigation/debugging (+{struggle_score:.2f})")
         
-        # 4. Check file criticality
+        # 5. Check file criticality
         file_score = self._score_critical_files(context.files_changed)
         if file_score > 0:
             score += file_score
             factors.append(f"Critical files modified (+{file_score:.2f})")
         
-        # 5. Check change magnitude
+        # 6. Check change magnitude
         magnitude_score = self._score_change_magnitude(
             context.lines_added, context.lines_deleted
         )
@@ -113,32 +125,32 @@ class SignificanceScorer:
             score += magnitude_score
             factors.append(f"Large changes (+{magnitude_score:.2f})")
         
-        # 6. Session duration (if available from AI coding session)
+        # 7. Session duration (if available from AI coding session)
         if context.session_duration:
             duration_score = self._score_session_duration(context.session_duration)
             if duration_score > 0:
                 score += duration_score
                 factors.append(f"Long session (+{duration_score:.2f})")
         
-        # 7. Check for configuration/infrastructure changes
+        # 8. Check for configuration/infrastructure changes
         infra_score = self._score_infrastructure(context.files_changed)
         if infra_score > 0:
             score += infra_score
             factors.append(f"Infrastructure changes (+{infra_score:.2f})")
         
-        # 8. Penalize trivial commits
+        # 9. Penalize trivial commits
         trivial_penalty = self._score_trivial(context.message)
         if trivial_penalty < 0:
             score += trivial_penalty
             factors.append(f"Trivial changes ({trivial_penalty:.2f})")
         
-        # 9. Check for patterns like "413 error", "HTTP 500", etc
+        # 10. Check for patterns like "413 error", "HTTP 500", etc
         error_pattern_score = self._score_error_patterns(context.message)
         if error_pattern_score > 0:
             score += error_pattern_score
             factors.append(f"Error fix pattern (+{error_pattern_score:.2f})")
         
-        # 10. Branch context (feature branches often have significant work)
+        # 11. Branch context (feature branches often have significant work)
         branch_score = self._score_branch_context(context.branch)
         if branch_score > 0:
             score += branch_score
@@ -160,6 +172,26 @@ class SignificanceScorer:
                 if 'finally' in message_lower or 'hours' in message_lower:
                     return 0.4
                 return 0.3
+        return 0.0
+    
+    def _score_conventional_commits(self, message: str) -> float:
+        """Score conventional commit types"""
+        # Check for conventional commit format: type(scope): description
+        # or just type: description
+        import re
+        pattern = r'^(feat|fix|docs|style|refactor|test|chore|perf|build|ci)(\([^)]*\))?:'
+        if re.match(pattern, message.lower()):
+            commit_type = re.match(pattern, message.lower()).group(1)
+            
+            # Some types are more significant than others
+            high_value_types = ['feat', 'fix', 'refactor', 'perf']
+            medium_value_types = ['docs', 'test', 'chore', 'build', 'ci']
+            
+            if commit_type in high_value_types:
+                return 0.4  # High significance
+            elif commit_type in medium_value_types:
+                return 0.3  # Medium significance (enough to trigger capture)
+        
         return 0.0
     
     def _score_major_work(self, message: str) -> float:
@@ -272,6 +304,27 @@ class SignificanceScorer:
         """Suggest the type of saga based on context"""
         message_lower = context.message.lower()
         
+        # Check for conventional commit types first
+        import re
+        pattern = r'^(feat|fix|docs|style|refactor|test|chore|perf|build|ci)(\([^)]*\))?:'
+        match = re.match(pattern, message_lower)
+        if match:
+            commit_type = match.group(1)
+            type_mapping = {
+                'feat': 'feature',
+                'fix': 'debugging', 
+                'docs': 'general',
+                'style': 'general',
+                'refactor': 'architecture',
+                'test': 'general',
+                'chore': 'general',
+                'perf': 'optimization',
+                'build': 'general',
+                'ci': 'general'
+            }
+            return type_mapping.get(commit_type, 'general')
+        
+        # Fallback to keyword detection
         if any(k in message_lower for k in ['fix', 'bug', 'error', 'crash', 'issue']):
             return 'debugging'
         elif any(k in message_lower for k in ['feature', 'add', 'implement', 'new']):
