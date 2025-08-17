@@ -101,8 +101,8 @@ class AutoChronicler:
             files_changed=context.files_changed
         )
         
-        # Save saga
-        saga.save(self.saga_dir / 'sagas')
+        # Don't save here - let the caller decide where to save
+        # This prevents duplicate saves when capture command also saves
         
         # Clear session context after capture
         self._clear_session_context()
