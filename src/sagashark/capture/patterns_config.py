@@ -166,25 +166,19 @@ class PatternsConfig:
         example_config = {
             "_comment": "Customize these patterns for your project. This file extends the default patterns.",
             
-            "error_patterns": [
-                "# Add your custom error patterns here",
-                "# Example: r'CustomError:\\s*([^\\n]+)'"
-            ],
+            "error_patterns": [],
             
             "verification_steps": {
-                "# Add custom file extensions and their verification steps",
                 ".custom": "Run custom verification command"
             },
             
             "framework_patterns": {
-                "# Add patterns for your specific framework",
                 "your_framework": {
                     "pattern/": "Verification step for this pattern"
                 }
             },
             
             "project_specific": {
-                "# Add any project-specific configuration",
                 "test_command": "npm test",
                 "build_command": "npm run build",
                 "deploy_command": "npm run deploy"
