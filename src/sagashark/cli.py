@@ -448,35 +448,6 @@ def status(ctx):
             console.print(f"  • [{date_str}] {saga.title[:50]}")
 
 
-@cli.command()
-@click.option('--commit', '-c', default='HEAD', help='Commit to capture (default: HEAD)')
-@click.option('--force', '-f', is_flag=True, help='Force capture even if not significant')
-@click.pass_context
-def capture(ctx, commit, force):
-    """Capture a saga from a git commit"""
-    show_banner()
-    if not ctx.obj['is_initialized']:
-        console.print("[red]X SagaShark not initialized. Run 'saga init' first.[/red]")
-        sys.exit(1)
-    
-    # Auto-setup AI if not configured
-    from sagashark.setup import check_and_setup_ollama
-    check_and_setup_ollama(silent=True)
-    
-    chronicler = AutoChronicler()
-    
-    if force:
-        # Temporarily lower the threshold to capture
-        chronicler.scorer.min_threshold = 0.0
-    
-    saga = chronicler.capture_from_commit(commit)
-    
-    if saga:
-        console.print(f"[green]✓ Captured saga: {saga.title}[/green]")
-    else:
-        console.print("[yellow]Commit not significant enough for saga capture.[/yellow]")
-        console.print("Use --force to capture anyway.")
-
 
 @cli.command()
 @click.option('--since', '-s', default='HEAD~10', help='Analyze commits since (default: HEAD~10)')

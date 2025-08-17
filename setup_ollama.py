@@ -91,7 +91,7 @@ def main():
     print("[SUCCESS] GitSaga AI features are ready to use!")
     print("=" * 50)
     print("\nYou can now use commands like:")
-    print("  saga capture --commit HEAD")
+    print("  saga capture HEAD")
     print("  saga monitor")
     print("  saga enhance")
     
