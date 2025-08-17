@@ -878,6 +878,91 @@ def organize(ctx, dry_run, cleanup):
         console.print("\n[dim]Run without --dry-run to apply changes[/dim]")
 
 
+@cli.command('capture')
+@click.argument('commit', default='HEAD')
+@click.option('--auto', is_flag=True, help='Automatic capture mode (for git hooks)')
+@click.option('--force', is_flag=True, help='Force capture even if not significant')
+@click.pass_context
+def capture(ctx, commit, auto, force):
+    """Capture a saga from a commit"""
+    if auto:
+        # In auto mode, don't show banner or verbose output
+        pass
+    else:
+        show_banner()
+    
+    if not ctx.obj['is_initialized']:
+        if not auto:
+            console.print("[red]X SagaShark not initialized. Run 'saga init' first.[/red]")
+        sys.exit(1)
+    
+    try:
+        from sagashark.capture.auto_chronicler import AutoChronicler
+        from sagashark.capture.significance import SignificanceScorer
+        from sagashark.capture.interactive_capture import InteractiveCapturer
+        
+        chronicler = AutoChronicler()
+        
+        # Get commit context and score
+        context = chronicler._get_commit_context(commit)
+        if not context:
+            if not auto:
+                console.print(f"[red]Could not find commit {commit}[/red]")
+            return
+        
+        scorer = SignificanceScorer()
+        score_result = scorer.calculate_score(context)
+        score = score_result['score']
+        
+        # Check if this is significant (unless forced)
+        if not force and score < 0.3:
+            if not auto:
+                console.print(f"[yellow]Commit not significant enough for saga capture (score: {score:.2f})[/yellow]")
+                console.print("Use --force to capture anyway")
+            return
+        
+        # Capture the saga
+        saga = chronicler.capture_from_commit(commit)
+        
+        if not saga:
+            if not auto:
+                console.print("[red]Failed to capture saga[/red]")
+            return
+        
+        # For high-value commits in interactive mode, prompt for more info
+        if not auto and score >= 0.5:
+            capturer = InteractiveCapturer()
+            if sys.stdin.isatty() and sys.stdout.isatty():
+                if capturer.should_capture_interactively(score, context.message):
+                    try:
+                        enhanced_saga = capturer.capture_high_value_info(
+                            context.message, 
+                            saga
+                        )
+                        saga = enhanced_saga
+                        console.print("[green]✓ Enhanced saga with debugging context![/green]")
+                    except (KeyboardInterrupt, EOFError):
+                        console.print("[yellow]Skipped interactive capture[/yellow]")
+        
+        # Save the saga
+        saga_path = saga.save(ctx.obj['saga_dir'])
+        
+        if auto:
+            # Minimal output for git hook
+            print(f"SagaShark: Captured '{saga.title}'")
+        else:
+            console.print(f"[green]✓ Captured saga: {saga.title}[/green]")
+            console.print(f"  File: {saga_path.name}")
+            console.print(f"  Score: {score:.2f}")
+            
+    except Exception as e:
+        if not auto:
+            console.print(f"[red]Error during capture: {e}[/red]")
+        # Don't fail git commit if saga capture fails
+        if auto:
+            sys.exit(0)
+
+
 @cli.command('install-hooks')
 @click.pass_context
 def install_hooks(ctx):
@@ -886,11 +971,6 @@ def install_hooks(ctx):
     if not ctx.obj['is_initialized']:
         console.print("[red]X SagaShark not initialized. Run 'saga init' first.[/red]")
         sys.exit(1)
-    
-    import shutil
-    
-    # Source hook file
-    src_hook = Path(__file__).parent / 'hooks' / 'post_commit.py'
     
     # Destination in .git/hooks
     git_dir = Path.cwd() / '.git'
@@ -909,8 +989,23 @@ def install_hooks(ctx):
             console.print("[yellow]Hook installation cancelled[/yellow]")
             return
     
-    # Copy hook file
-    shutil.copy2(src_hook, dest_hook)
+    # Create a platform-appropriate hook script that calls saga capture
+    # This works regardless of where sagashark is installed
+    if sys.platform == 'win32':
+        # Windows batch script
+        hook_content = """@echo off
+saga capture HEAD --auto 2>NUL
+exit 0
+"""
+    else:
+        # Unix shell script  
+        hook_content = """#!/bin/sh
+saga capture HEAD --auto 2>/dev/null || true
+exit 0
+"""
+    
+    # Write the hook
+    dest_hook.write_text(hook_content)
     
     # Make executable on Unix-like systems
     if os.name != 'nt':
