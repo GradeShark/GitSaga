@@ -51,7 +51,6 @@ setup(
         "console_scripts": [
             "saga=sagashark.cli_wrapper:main",
             "sagashark=sagashark.cli_wrapper:main",
-            "schat=sagashark.schat:main",
         ],
     },
     project_urls={

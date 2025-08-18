@@ -14,7 +14,11 @@
       "Bash(saga:*)",
       "Bash(tree:*)",
       "Bash(cmd /c:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(git push:*)",
+      "Bash(dir:*)",
+      "Bash(del nul)"
     ],
     "deny": [],
     "ask": [],
