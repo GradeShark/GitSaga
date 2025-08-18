@@ -198,6 +198,9 @@ def commit(ctx, message, saga_type, content, tags):
             for f in modified_files[:5]:
                 content += f"- {f}\n"
     
+    # Get current HEAD commit if available
+    commit_id = git.get_head_commit()
+    
     # Create saga
     saga = Saga(
         title=message,
@@ -205,7 +208,8 @@ def commit(ctx, message, saga_type, content, tags):
         saga_type=saga_type,
         branch=branch,
         tags=tag_list,
-        files_changed=modified_files
+        files_changed=modified_files,
+        commit_id=commit_id
     )
     
     # Determine storage directory

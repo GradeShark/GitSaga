@@ -100,7 +100,8 @@ class AutoChronicler:
             saga_type=score_result['suggested_type'],
             branch=context.branch,
             tags=self._extract_tags(context, score_result),
-            files_changed=context.files_changed
+            files_changed=context.files_changed,
+            commit_id=context.commit_sha
         )
         
         # Don't save here - let the caller decide where to save
@@ -192,7 +193,8 @@ class AutoChronicler:
                 diff_content=diff_content,
                 session_duration=session_duration,
                 is_merge=is_merge,
-                is_revert=is_revert
+                is_revert=is_revert,
+                commit_sha=commit_sha
             )
             
         except Exception as e:

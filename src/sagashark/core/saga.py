@@ -26,6 +26,7 @@ class Saga:
     files_changed: List[str] = field(default_factory=list)
     status: str = "active"  # active, archived, deprecated
     id: Optional[str] = None
+    commit_id: Optional[str] = None  # Git commit SHA if saga is from a commit
     
     def __post_init__(self):
         """Generate ID if not provided"""
@@ -50,6 +51,10 @@ class Saga:
             'tags': self.tags,
             'files_changed': self.files_changed
         }
+        
+        # Include commit_id if present
+        if self.commit_id:
+            frontmatter['commit_id'] = self.commit_id
         
         # Use literal style for YAML to preserve formatting
         yaml_str = yaml.dump(frontmatter, default_flow_style=False, sort_keys=False)
@@ -86,7 +91,8 @@ class Saga:
             branch=metadata.get('branch', 'main'),
             tags=metadata.get('tags', []),
             files_changed=metadata.get('files_changed', []),
-            status=metadata.get('status', 'active')
+            status=metadata.get('status', 'active'),
+            commit_id=metadata.get('commit_id')
         )
     
     @classmethod

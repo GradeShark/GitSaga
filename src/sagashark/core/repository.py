@@ -102,6 +102,28 @@ class GitRepository:
         
         return ""
     
+    def get_head_commit(self) -> Optional[str]:
+        """Get the current HEAD commit SHA"""
+        if not self.is_git_repo:
+            return None
+        
+        try:
+            result = subprocess.run(
+                ['git', 'rev-parse', 'HEAD'],
+                cwd=self.repo_path,
+                capture_output=True,
+                text=True,
+                timeout=5
+            )
+            
+            if result.returncode == 0:
+                return result.stdout.strip()
+                
+        except (subprocess.SubprocessError, OSError):
+            pass
+        
+        return None
+    
     def get_repo_info(self) -> Dict[str, any]:
         """Get comprehensive repository information"""
         return {

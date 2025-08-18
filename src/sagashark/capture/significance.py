@@ -24,6 +24,7 @@ class CommitContext:
     is_merge: bool = False
     is_revert: bool = False
     previous_commits: List[str] = None
+    commit_sha: str = None
 
 
 class SignificanceScorer:
