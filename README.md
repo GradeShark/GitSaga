@@ -33,6 +33,12 @@ SagaShark is a local-first development context manager that automatically captur
 - **Single Command Setup**: `saga init` handles everything
 - **Beautiful CLI**: Rich formatting, progress indicators, helpful prompts
 
+### 🎭 SagaChat (NEW!)
+- **Claude Code Capture**: Auto-capture terminal conversations with `schat`
+- **Smart Organization**: Conversations organized by year/month/week
+- **Full History**: Every message, timestamp, and response preserved
+- **Searchable Archive**: Find past AI assistance sessions instantly
+
 ## Quick Start
 
 ### Installation
@@ -104,6 +110,11 @@ your-project/
     │   │   ├── feature/
     │   │   └── architecture/
     │   └── feature-auth/ # Sagas from feature branches
+    ├── sagachat/         # Claude Code conversation logs (NEW!)
+    │   └── 2025/
+    │       └── 01/
+    │           └── week-03/
+    │               └── 2025-01-18-1430-implement-auth.md
     └── index/            # Search index (git-ignored)
 ```
 
@@ -198,6 +209,78 @@ Install git hooks for automatic saga capture on commit.
 
 ### `saga setup-ai`
 One-command setup for AI features (installs Ollama + downloads model).
+
+## SagaChat - Capture Claude Conversations 🎭
+
+**NEW!** Automatically capture and organize your Claude terminal sessions for future reference.
+
+### `schat` - Claude with Auto-Capture
+
+Instead of running `claude`, use `schat` to automatically capture your entire conversation:
+
+```bash
+# Start Claude Code with automatic conversation logging
+schat
+
+# Everything is captured to .sagashark/sagachat/ organized by date
+# When you exit, you'll see where the session was saved
+```
+
+### Features
+
+- **Zero-config capture**: Just use `schat` instead of `claude`
+- **Smart naming**: Extracts topic from your first message
+- **Organized by date**: Year/month/week folder structure
+- **Full conversation history**: Every message preserved with timestamps
+- **Cross-platform**: Works in Windows, WSL, and Linux
+
+### Usage
+
+```bash
+# Start a captured Claude session
+schat
+📝 SagaChat: Recording to 2025-01-18-1430-implement-jwt-auth.md
+Starting Claude Code...
+
+# List recent chat sessions
+schat --list
+📚 Recent Chat Sessions:
+  2025-01-18 14:30 - implement-jwt-auth
+  2025-01-18 15:45 - debug-websocket-memory-leak
+  2025-01-18 16:20 - review-react-components
+
+# Search through all conversations
+schat --search "websocket"
+🔍 Searching for: websocket
+  2025/01/week-03/2025-01-18-1545-debug-websocket.md (12 matches)
+```
+
+### How It Works
+
+`schat` is a simple wrapper that:
+1. Launches Claude Code normally
+2. Captures all terminal input/output
+3. Saves to `.sagashark/sagachat/` with smart organization
+4. No servers, no MCP, just local file writes
+
+### Example Chat File
+
+```markdown
+---
+id: chat-2025-01-18-1430
+title: Help me implement JWT authentication
+started: 2025-01-18T14:30:00
+messages: 24
+---
+
+## Conversation
+
+### User [14:30:15]
+Help me implement JWT authentication with refresh tokens
+
+### Claude [14:30:18]
+I'll help you implement JWT authentication with refresh tokens...
+```
 
 ## Uninstalling
 
